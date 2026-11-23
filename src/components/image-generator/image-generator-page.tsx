@@ -40,7 +40,7 @@ export function ImageGeneratorPageContent() {
   const [batchId, setBatchId] = useState(newImageBatchId);
   const [previewKey, setPreviewKey] = useState(0);
   const [usageTab, setUsageTab] = useState<UsageTab>("html");
-  const [origin, setOrigin] = useState("https://mockdata.ir");
+  const [origin, setOrigin] = useState("https://mock.sonojs.com");
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {

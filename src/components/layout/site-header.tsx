@@ -8,7 +8,6 @@ import {
   ChevronDown,
   Home,
   ImageIcon,
-  Languages,
   Layers,
   Mail,
   Menu,
@@ -19,7 +18,6 @@ import {
   Timer,
   X,
 } from "lucide-react";
-import { GithubStarsLink } from "@/components/layout/github-stars-link";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ResourcesNavMenu } from "@/components/layout/resources-nav-menu";
 import { TemporaryApiLabel } from "@/components/layout/temporary-api-label";
@@ -41,7 +39,7 @@ function preloadResourceImages() {
 }
 
 export function SiteHeader() {
-  const { dict, locale, setLocale } = useUiLocale();
+  const { dict, locale } = useUiLocale();
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
@@ -130,7 +128,7 @@ export function SiteHeader() {
         className="text-[15px] font-semibold tracking-tight ltr-tech"
         dir="ltr"
       >
-        MockData.ir
+        mock.sonojs.com
       </span>
     </Link>
   );
@@ -195,10 +193,6 @@ export function SiteHeader() {
           </nav>
 
           <div className="hidden shrink-0 items-center gap-0.5 md:flex">
-            <GithubStarsLink
-              compact
-              label={dict.header.githubStars}
-            />
             <LanguageSwitcher />
             <ThemeToggle />
             <Link
@@ -399,22 +393,7 @@ export function SiteHeader() {
 
               <div className="my-1 border-t border-border" />
 
-              <button
-                type="button"
-                onClick={() => setLocale(isFa ? "en" : "fa")}
-                className={drawerItemClass}
-                aria-label={dict.header.apiLangGroup}
-              >
-                <Languages
-                  className={drawerIconClass}
-                  strokeWidth={1.75}
-                  aria-hidden
-                />
-                <span className="flex-1">{dict.header.apiLangGroup}</span>
-                <span className="text-[12px] text-muted-foreground" dir="ltr">
-                  {isFa ? "FA" : "EN"}
-                </span>
-              </button>
+              <LanguageSwitcher className="mx-3 my-1 block" drawer />
               <button
                 type="button"
                 onClick={toggleTheme}
@@ -453,11 +432,6 @@ export function SiteHeader() {
                 />
                 {dict.header.contact}
               </Link>
-              <GithubStarsLink
-                label={dict.header.github}
-                className={drawerItemClass}
-                onNavigate={closeMenu}
-              />
             </nav>
           </aside>
         </div>

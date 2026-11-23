@@ -31,7 +31,7 @@ export default function OpenGraphImage() {
             textTransform: "uppercase",
           }}
         >
-          mockdata.ir
+          mock.sonojs.com
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>

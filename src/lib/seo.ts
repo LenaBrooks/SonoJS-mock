@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ApiResource } from "@/lib/catalog";
 import type { UiLocale } from "@/lib/i18n/constants";
 
-export const SITE_URL = "https://mockdata.ir";
+export const SITE_URL = "https://mock.sonojs.com";
 export const SITE_NAME = "MockData";
 export const SITE_TAGLINE = "Free Fake REST API";
 

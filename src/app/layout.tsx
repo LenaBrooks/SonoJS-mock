@@ -3,6 +3,7 @@ import { IBM_Plex_Sans, JetBrains_Mono, Vazirmatn } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteHeader } from "@/components/layout/site-header";
 import { NavigationProgress } from "@/components/layout/navigation-progress";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { UiLocaleProvider } from "@/components/providers/ui-locale-provider";
 import { getServerUiLocale } from "@/lib/i18n/server";
@@ -65,7 +66,9 @@ const themeInitScript = `(() => {
   try {
     const key = 'mockdata-theme';
     const stored = localStorage.getItem(key);
-    const theme = stored === 'light' || stored === 'dark' ? stored : 'light';
+    const theme = stored === 'light' || stored === 'dark'
+      ? stored
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     const root = document.documentElement;
     root.classList.toggle('dark', theme === 'dark');
     root.style.colorScheme = theme;
@@ -76,11 +79,11 @@ const localeInitScript = `(() => {
   try {
     const key = 'mockdata-ui-locale';
     const stored = localStorage.getItem(key);
-    const locale = stored === 'en' ? 'en' : 'fa';
+    const locale = stored === 'fa' ? 'fa' : 'en';
     const root = document.documentElement;
     root.lang = locale === 'fa' ? 'fa' : 'en';
-    root.dir = locale === 'fa' ? 'rtl' : 'ltr';
-    root.classList.toggle('font-fa', locale === 'fa');
+    root.dir = locale === 'fa' || locale === 'ar' ? 'rtl' : 'ltr';
+    root.classList.toggle('font-fa', locale === 'fa' || locale === 'ar');
   } catch (_) {}
 })();`;
 
@@ -94,8 +97,8 @@ export default async function RootLayout({
   return (
     <html
       lang={initialLocale === "fa" ? "fa" : "en"}
-      dir={initialLocale === "fa" ? "rtl" : "ltr"}
-      className={`${plexSans.variable} ${jetbrains.variable} ${vazirmatn.variable} h-full${initialLocale === "fa" ? " font-fa" : ""}`}
+      dir={initialLocale === "fa" || initialLocale === "ar" ? "rtl" : "ltr"}
+      className={`${plexSans.variable} ${jetbrains.variable} ${vazirmatn.variable} h-full${initialLocale === "fa" || initialLocale === "ar" ? " font-fa" : ""}`}
       suppressHydrationWarning
     >
       <head>
@@ -107,7 +110,8 @@ export default async function RootLayout({
           <ThemeProvider>
             <NavigationProgress />
             <SiteHeader />
-            <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-0">{children}</main>
+        <MobileBottomNav />
           </ThemeProvider>
         </UiLocaleProvider>
         <Analytics />

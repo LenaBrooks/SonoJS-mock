@@ -276,10 +276,10 @@ export function DocsPageContent() {
             <div className="space-y-3" dir="ltr">
               <VsCodeBlock
                 code={`<!-- SVG placeholder -->
-<img src="https://mockdata.ir/image/800/600" alt="Placeholder" />
+<img src="https://mock.sonojs.com/image/800/600" alt="Placeholder" />
 
 <!-- Real photo -->
-<img src="https://mockdata.ir/image/800/600?type=real" alt="Photo" />`}
+<img src="https://mock.sonojs.com/image/800/600?type=real" alt="Photo" />`}
                 language="html"
               />
             </div>

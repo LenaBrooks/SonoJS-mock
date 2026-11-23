@@ -15,7 +15,7 @@ export function readStoredUiLocale(): UiLocale {
   try {
     return parseUiLocale(localStorage.getItem(UI_LOCALE_STORAGE_KEY));
   } catch {
-    return "fa";
+    return "en";
   }
 }
 
@@ -50,6 +50,6 @@ export function writeUiLocale(locale: UiLocale) {
 export function applyDocumentLocale(locale: UiLocale) {
   const root = document.documentElement;
   root.lang = locale === "fa" ? "fa" : "en";
-  root.dir = locale === "fa" ? "rtl" : "ltr";
-  root.classList.toggle("font-fa", locale === "fa");
+  root.dir = locale === "fa" || locale === "ar" ? "rtl" : "ltr";
+  root.classList.toggle("font-fa", locale === "fa" || locale === "ar");
 }

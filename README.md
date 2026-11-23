@@ -40,9 +40,6 @@ Open [http://localhost:3000](http://localhost:3000).
 | `DATABASE_URL` | Yes | Postgres connection string |
 | `ADMIN_SECRET` | For manual reset | Protects `POST /api/admin/reset` and the Docs reset panel |
 | `CRON_SECRET` | Production cron | Protects `GET /api/cron/reset` (Vercel sends it as `Authorization: Bearer …`) |
-| `RESEND_API_KEY` | Contact form | Resend API key |
-| `CONTACT_TO` | Contact form | Inbox address |
-| `CONTACT_FROM` | Optional | Sender, e.g. `MockData <info@mockdata.ir>` |
 
 ## Product surfaces
 
@@ -105,7 +102,7 @@ curl http://localhost:3000/api/auth/me \
 
 ### Temporary API
 
-Paste your own JSON at [/temporary](https://mockdata.ir/temporary) (or locally `/temporary`). You get a public URL like `/api/t/<id>` that lasts 1–24 hours.
+Paste your own JSON at [/temporary](https://mock.sonojs.com/temporary) (or locally `/temporary`). You get a public URL like `/api/t/<id>` that lasts 1–24 hours.
 
 ```bash
 # After creating in the UI, call the public URL:
@@ -135,7 +132,7 @@ You can also publish from the **Fake Data Generator** (`Create API`) — same Te
 
 ### Fake Data Generator
 
-Open [/generator](https://mockdata.ir/generator) (or locally `/generator`). Generation runs **in the browser** — no backend call for the JSON itself.
+Open [/generator](https://mock.sonojs.com/generator) (or locally `/generator`). Generation runs **in the browser** — no backend call for the JSON itself.
 
 | Capability | Detail |
 |------------|--------|
@@ -150,7 +147,7 @@ Open [/generator](https://mockdata.ir/generator) (or locally `/generator`). Gene
 
 ### Image Generator
 
-Open [/image-generator](https://mockdata.ir/image-generator) (or locally `/image-generator`) to pick size and mode, then copy a URL.
+Open [/image-generator](https://mock.sonojs.com/image-generator) (or locally `/image-generator`) to pick size and mode, then copy a URL.
 
 | Mode | URL | Behavior |
 |------|-----|----------|
@@ -159,15 +156,15 @@ Open [/image-generator](https://mockdata.ir/image-generator) (or locally `/image
 | Stable | add `?seed=my-seed` | Same SVG colors or same real photo every time |
 
 ```html
-<img src="https://mockdata.ir/image/400/400" alt="Avatar" />
-<img src="https://mockdata.ir/image/1200/630?type=real" alt="Cover" />
+<img src="https://mock.sonojs.com/image/400/400" alt="Avatar" />
+<img src="https://mock.sonojs.com/image/1200/630?type=real" alt="Cover" />
 ```
 
 Optional query: `bg` / `fg` (hex) for custom SVG colors when you want full control.
 
 ### Playground
 
-[/playground](https://mockdata.ir/playground) sends live requests against the seeded APIs. Resource choice, action, URL, body, and last responses are kept **per resource** while you navigate the site (SPA). A full page reload starts fresh (Bearer token may still be in `sessionStorage`).
+[/playground](https://mock.sonojs.com/playground) sends live requests against the seeded APIs. Resource choice, action, URL, body, and last responses are kept **per resource** while you navigate the site (SPA). A full page reload starts fresh (Bearer token may still be in `sessionStorage`).
 
 ### CRUD pattern
 
@@ -223,7 +220,7 @@ const { data, font } = await res.json();
 - FA responses set `Content-Language: fa` and include a `font` object
 - The site header **EN | FA** toggle only appends `?lang=fa` in the Playground — the API does not read cookies
 
-See also [Docs → Language](https://mockdata.ir/docs#language).
+See also [Docs → Language](https://mock.sonojs.com/docs#language).
 
 ## Rate limit
 
@@ -267,5 +264,4 @@ Also accepts `Authorization: Bearer <ADMIN_SECRET>`.
 - **Next.js 16** (App Router) + TypeScript + Tailwind CSS
 - **Drizzle ORM** + Neon / Postgres
 - **Zod** request validation
-- **Resend** for the contact form
 - Deployed on **Vercel** (optional daily cron reset)
