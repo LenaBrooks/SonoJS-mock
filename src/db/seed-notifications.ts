@@ -10,7 +10,7 @@ export type SeedNotification = {
 export const seedNotifications: SeedNotification[] = [
   {
     authorUsername: "avachen",
-    title: "Welcome to MockData",
+    title: "Welcome to SonoJS Mock",
     message: "Your workspace seed data is ready to explore.",
     type: "success",
     read: true,
@@ -79,7 +79,7 @@ export const seedNotifications: SeedNotification[] = [
     read: false,
   },
   {
-    authorUsername: "ohassan",
+    authorUsername: "tbrooks",
     title: "OpenAPI drift",
     message: "A PR changed routes without updating OpenAPI.",
     type: "warning",
@@ -121,7 +121,7 @@ export const seedNotifications: SeedNotification[] = [
     read: false,
   },
   {
-    authorUsername: "asaleh",
+    authorUsername: "lhayes",
     title: "Delay capped",
     message: "Mock delay query params max out at 5000ms.",
     type: "info",
@@ -163,9 +163,9 @@ export const seedNotifications: SeedNotification[] = [
     read: true,
   },
   {
-    authorUsername: "fzahra",
+    authorUsername: "eparker",
     title: "Welcome",
-    message: "Thanks for trying MockData — start in the playground.",
+    message: "Thanks for trying SonoJS Mock - start in the playground.",
     type: "success",
     read: false,
   },

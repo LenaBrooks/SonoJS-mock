@@ -1,6 +1,5 @@
 import { getUserById, getUserByUsername } from "@/db/queries/users";
 import type { User } from "@/db/schema/users";
-import { faUsers } from "@/lib/api/fa/users";
 import { MOCK_PASSWORD, MOCK_TOKEN_PREFIX } from "@/lib/auth/constants";
 
 export { MOCK_PASSWORD } from "@/lib/auth/constants";
@@ -24,14 +23,8 @@ export function extractBearerToken(header: string | null): string | null {
   return value.trim() || null;
 }
 
-/** Accept English seed usernames or FA overlay usernames (e.g. sara.mohammadi). */
 function resolveSeedUsername(username: string): string {
-  const trimmed = username.trim();
-  if (faUsers[trimmed]) return trimmed;
-  for (const [seedUsername, overlay] of Object.entries(faUsers)) {
-    if (overlay.username === trimmed) return seedUsername;
-  }
-  return trimmed;
+  return username.trim();
 }
 
 export async function verifyCredentials(

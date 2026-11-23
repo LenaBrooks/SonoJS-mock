@@ -14,7 +14,7 @@ type Props = {
   readOnly?: boolean;
   rows?: number;
   className?: string;
-  /** Copy (or other) control — rendered top-end inside the dark code frame. */
+  /** Copy (or other) control - rendered top-end inside the dark code frame. */
   headerAction?: ReactNode;
   tone?: "input" | "output" | "neutral";
 };

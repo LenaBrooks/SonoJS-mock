@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { SITE_NAME } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
-const STORAGE_KEY = "mockdata-hero-load-id";
+const STORAGE_KEY = "sonojs-mock-hero-load-id";
 
 export function HeroTitle({ className }: { className?: string }) {
   const [mode, setMode] = useState<"pending" | "static" | "play">("pending");
@@ -69,13 +69,16 @@ export function HeroTitle({ className }: { className?: string }) {
           {letters.map((char, i) => (
             <span
               key={i}
-              className="hero-letter-mask inline-block overflow-hidden pt-[0.12em] pb-[0.1em]"
+              className={cn(
+                "hero-letter-mask inline-block overflow-hidden pt-[0.12em] pb-[0.1em]",
+                char === " " && "w-[0.28em]",
+              )}
             >
               <span
                 className="hero-letter-face inline-block will-change-transform"
                 style={{ ["--hero-i" as string]: i }}
               >
-                {char}
+                {char === " " ? "\u00a0" : char}
               </span>
             </span>
           ))}

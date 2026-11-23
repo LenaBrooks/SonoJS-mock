@@ -110,7 +110,7 @@ export function JsonPathTool() {
           onKeyDown={(e) => {
             if (e.key === "Enter") runQuery();
           }}
-          className="h-9 w-full rounded-md border border-border bg-background px-2.5 font-mono text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+          className="h-9 w-full rounded-md border border-border bg-background px-2.5 font-mono text-[13px] field-focus"
           dir="ltr"
           spellCheck={false}
         />

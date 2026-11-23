@@ -56,7 +56,7 @@ export default function CountriesApiPage() {
         {
           param: "search",
           description: "Name, capital, or ISO code",
-          example: "search=iran",
+          example: "search=united-kingdom",
         },
         {
           param: "region",
@@ -66,7 +66,7 @@ export default function CountriesApiPage() {
         {
           param: "code",
           description: "ISO alpha-2 code",
-          example: "code=IR",
+          example: "code=GB",
         },
         {
           param: "sort",

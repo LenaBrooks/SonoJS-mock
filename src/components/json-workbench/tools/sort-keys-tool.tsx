@@ -24,13 +24,11 @@ export function SortDirectionToggle({
 }: SortDirectionToggleProps) {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
 
   return (
     <div
       className={cn(
         "inline-flex shrink-0 rounded-md border border-border p-0.5",
-        isFa && "font-fa-label",
       )}
     >
       {(

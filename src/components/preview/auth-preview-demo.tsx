@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState, type MouseEvent } from "react";
 import { Check } from "lucide-react";
 import { MOCK_PASSWORD } from "@/lib/auth/constants";
-import { withApiLang } from "@/lib/api/use-api-locale";
+import { apiPath } from "@/lib/api/use-api-locale";
 import { useUiLocale } from "@/components/providers/ui-locale-provider";
 import { cn } from "@/lib/utils";
 
@@ -16,8 +16,7 @@ type AuthUser = {
 };
 
 export function AuthPreviewDemo() {
-  const { dict, locale } = useUiLocale();
-  const isFa = locale === "fa";
+  const { dict } = useUiLocale();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState(MOCK_PASSWORD);
   const [token, setToken] = useState("");
@@ -34,7 +33,7 @@ export function AuthPreviewDemo() {
     (async () => {
       try {
         const res = await fetch(
-          withApiLang("/api/users?limit=1&sort=name&order=asc", locale),
+          apiPath("/api/users?limit=1&sort=name&order=asc"),
         );
         const payload = await res.json();
         const first = payload?.data?.[0] as AuthUser | undefined;
@@ -52,7 +51,7 @@ export function AuthPreviewDemo() {
     return () => {
       cancelled = true;
     };
-  }, [locale]);
+  }, []);
 
   async function onLogin(e: FormEvent) {
     e.preventDefault();
@@ -60,7 +59,7 @@ export function AuthPreviewDemo() {
     setError(null);
     setSuccess(null);
     try {
-      const res = await fetch(withApiLang("/api/auth/login", locale), {
+      const res = await fetch(apiPath("/api/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -102,7 +101,7 @@ export function AuthPreviewDemo() {
     setPending(true);
     setError(null);
     try {
-      const res = await fetch(withApiLang("/api/auth/me", locale), {
+      const res = await fetch(apiPath("/api/auth/me"), {
         headers: { Authorization: `Bearer ${token}` },
       });
       const payload = await res.json();
@@ -121,13 +120,10 @@ export function AuthPreviewDemo() {
   const loggedIn = Boolean(token);
 
   return (
-    <div className="space-y-5" dir={isFa ? "rtl" : undefined}>
+    <div className="space-y-5" dir={"ltr"}>
       <form
         onSubmit={onLogin}
-        className={cn(
-          "space-y-3 rounded-xl border border-border bg-card p-5",
-          isFa && "font-[family-name:var(--font-vazirmatn)]",
-        )}
+        className="space-y-3 rounded-xl border border-border bg-card p-5"
       >
         <p className="text-[13px] text-muted-foreground">
           {dict.preview.authDemoPassword}{" "}
@@ -147,7 +143,7 @@ export function AuthPreviewDemo() {
             disabled={loadingUser || loggedIn}
             dir="ltr"
             autoComplete="username"
-            className="h-9 w-full rounded-md border border-border bg-muted px-3 font-mono text-[13px] outline-none focus-visible:border-[var(--request)]/50 disabled:opacity-60 ltr-tech"
+            className="h-9 w-full rounded-md border border-border bg-muted px-3 font-mono text-[13px] field-focus disabled:opacity-60 ltr-tech"
           />
         </label>
         <label className="block space-y-1 text-[12px]">
@@ -159,7 +155,7 @@ export function AuthPreviewDemo() {
             disabled={loggedIn}
             dir="ltr"
             autoComplete="current-password"
-            className="h-9 w-full rounded-md border border-border bg-muted px-3 font-mono text-[13px] outline-none focus-visible:border-[var(--request)]/50 disabled:opacity-60 ltr-tech"
+            className="h-9 w-full rounded-md border border-border bg-muted px-3 font-mono text-[13px] field-focus disabled:opacity-60 ltr-tech"
           />
         </label>
         <div className="flex flex-wrap gap-2 pt-1">
@@ -168,7 +164,6 @@ export function AuthPreviewDemo() {
             disabled={pending || loadingUser || !username || loggedIn}
             className={cn(
               "relative h-9 min-w-[5.5rem] rounded-md bg-[var(--request-fill)] px-3 text-[13px] font-semibold text-white disabled:opacity-50",
-              isFa && "font-fa-label",
             )}
           >
             <span className={cn(pending && !loggedIn && "invisible")}>
@@ -195,7 +190,6 @@ export function AuthPreviewDemo() {
         <p
           className={cn(
             "rounded-md border border-[var(--delete)]/30 bg-[var(--delete)]/10 px-3 py-2 text-[13px] text-[var(--delete)]",
-            isFa && "font-fa-label",
           )}
         >
           {error}
@@ -206,7 +200,6 @@ export function AuthPreviewDemo() {
         <div
           className={cn(
             "space-y-4 rounded-xl border border-border bg-card p-5",
-            isFa && "font-fa-label",
           )}
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -228,7 +221,6 @@ export function AuthPreviewDemo() {
               onClick={onLogout}
               className={cn(
                 "h-9 shrink-0 rounded-md border border-[var(--delete)]/40 bg-[var(--delete)]/10 px-3 text-[13px] font-semibold text-[var(--delete)] transition-colors hover:bg-[var(--delete)]/15",
-                isFa && "font-fa-label",
               )}
             >
               {dict.preview.logout}

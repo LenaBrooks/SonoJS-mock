@@ -14,7 +14,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/generator",
     "/image-generator",
     "/json",
-    "/contact",
   ].map((path) => ({
     url: absoluteUrl(path),
     lastModified,

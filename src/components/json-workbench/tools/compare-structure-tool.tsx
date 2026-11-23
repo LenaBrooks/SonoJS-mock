@@ -14,20 +14,20 @@ import { ParseError } from "../shared/parse-error";
 import { useWorkbench } from "../workbench-context";
 
 const SAMPLE_A = `{
-  "name": "MockData",
+  "name": "SonoJS Mock",
   "count": 3,
   "active": true,
   "address": {
-    "city": "Tehran"
+    "city": "London"
   }
 }`;
 
 const SAMPLE_B = `{
-  "name": "MockData",
+  "name": "SonoJS Mock",
   "count": 3,
   "role": "admin",
   "address": {
-    "city": "Tehran",
+    "city": "London",
     "zip": "123"
   }
 }`;
@@ -41,7 +41,6 @@ function prettyText(raw: string): string | null {
 export function CompareStructureTool() {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
   const { source, setSource, secondary, setSecondary } = useWorkbench();
   const aId = useId();
   const bId = useId();
@@ -87,7 +86,6 @@ export function CompareStructureTool() {
       <div
         className={cn(
           "flex flex-wrap gap-3 text-[11.5px]",
-          isFa && "font-fa-label",
         )}
       >
         <Legend swatch="missing" label={t.utilities.compareMissing} />
@@ -141,7 +139,6 @@ export function CompareStructureTool() {
           role="status"
           className={cn(
             "rounded-md border border-border bg-muted/40 px-3 py-2.5 text-[13px] text-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {t.utilities.compareIdentical}

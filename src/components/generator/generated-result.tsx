@@ -14,7 +14,6 @@ export function GeneratedResult({
   records,
   topicId,
   topicLabel,
-  isFa,
   copyLabel,
   downloadLabel,
   createApiLabel,
@@ -38,7 +37,6 @@ export function GeneratedResult({
   records: Record<string, unknown>[];
   topicId: string;
   topicLabel: string;
-  isFa: boolean;
   copyLabel: string;
   downloadLabel: string;
   createApiLabel: string;
@@ -79,7 +77,6 @@ export function GeneratedResult({
       <h2
         className={cn(
           "text-[15px] font-medium text-foreground",
-          isFa && "font-fa-label",
         )}
       >
         {generatedLabel}
@@ -90,15 +87,10 @@ export function GeneratedResult({
         dir="ltr"
       >
         <div className="flex items-center gap-2 border-b border-[var(--vscode-border)] bg-[var(--vscode-bg-elevated)] px-3 py-2">
-          <div className="flex items-center gap-1.5" aria-hidden>
-            <span className="size-2.5 rounded-full bg-[#ff5f56]" />
-            <span className="size-2.5 rounded-full bg-[#ffbd2e]" />
-            <span className="size-2.5 rounded-full bg-[#27c93f]" />
-          </div>
           <span
             className={cn(
               "min-w-0 truncate text-[10px] text-[var(--vscode-fg)]/45",
-              isFa ? "font-fa-label" : "font-mono",
+              "font-mono",
             )}
           >
             {topicLabel} · {count}
@@ -162,9 +154,6 @@ export function GeneratedResult({
                   {highlightCode(
                     line.length ? line : " ",
                     view === "json" ? "json" : "types",
-                    {
-                      persianStrings: isFa && view === "json",
-                    },
                   )}
                 </span>
               </span>
@@ -190,7 +179,6 @@ export function GeneratedResult({
             <p
               className={cn(
                 "text-[13px] font-medium text-[var(--response)]",
-                isFa && "font-fa-label",
               )}
             >
               {createdTitle}
@@ -223,7 +211,6 @@ export function GeneratedResult({
           htmlFor="generator-tmp-duration"
           className={cn(
             "text-[13px] text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {durationLabel}
@@ -237,8 +224,7 @@ export function GeneratedResult({
                 onDurationChange(e.target.value as TemporaryDuration)
               }
               className={cn(
-                "h-10 w-full appearance-none rounded-lg border border-border bg-white pe-9 ps-3 text-[14px] outline-none transition-colors focus:border-foreground/35 dark:bg-background",
-                isFa && "font-fa-label",
+                "field-focus h-10 w-full appearance-none rounded-lg border border-border bg-white pe-9 ps-3 text-[14px] dark:bg-background",
               )}
             >
               {TEMPORARY_DURATIONS.map((d) => (
@@ -259,7 +245,6 @@ export function GeneratedResult({
             onClick={onCreateApi}
             className={cn(
               "inline-flex h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-md bg-[var(--request-fill)] text-[14px] font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40",
-              isFa && "font-fa-label",
             )}
           >
             {creating ? (
@@ -283,7 +268,6 @@ export function GeneratedResult({
           <p
             className={cn(
               "text-[13px] leading-5 text-muted-foreground",
-              isFa && "font-fa-label",
             )}
           >
             {createBlockedReason}

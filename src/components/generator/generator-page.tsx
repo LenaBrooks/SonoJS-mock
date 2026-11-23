@@ -33,7 +33,6 @@ export function GeneratorPageContent() {
   const { dict, locale } = useUiLocale();
   const t = dict.generator;
   const tmp = dict.temporary;
-  const isFa = locale === "fa";
 
   const initial = loadGeneratorSession();
   const [topicId, setTopicId] = useState<string | null>(initial.topicId);
@@ -130,8 +129,8 @@ export function GeneratorPageContent() {
           topicId,
           fields: [...fields],
           quantity: clampQuantity(quantity),
-          country: isFa ? "IR" : "all",
-          uiLocale: isFa ? "fa" : "en",
+          country: "all",
+          uiLocale: "en",
         },
         (done, total) => setProgress(done / total),
       );
@@ -253,7 +252,7 @@ export function GeneratorPageContent() {
     }
   }
 
-  const qtyLabel = quantity.toLocaleString(isFa ? "fa-IR" : "en-US", {
+  const qtyLabel = quantity.toLocaleString("en-US", {
     useGrouping: false,
   });
   const generateLabel = t.generate.replace("{n}", qtyLabel);
@@ -263,11 +262,11 @@ export function GeneratorPageContent() {
     if (topic?.id === "orders") {
       return {
         ...t.fields,
-        id: isFa ? "کد سفارش" : "Order code",
+        id: "Order code",
       };
     }
     return t.fields;
-  }, [topic?.id, t.fields, isFa]);
+  }, [topic?.id, t.fields]);
 
   return (
     <div className="mx-auto max-w-3xl px-4 pt-10 pb-36 sm:px-6 sm:pb-14 sm:pt-14">
@@ -275,7 +274,6 @@ export function GeneratorPageContent() {
         <h1
           className={cn(
             "inline-flex min-w-0 items-center gap-2.5 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl",
-            isFa && "font-fa-label",
           )}
         >
           <Link
@@ -285,7 +283,7 @@ export function GeneratorPageContent() {
             className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <ArrowLeft
-              className={cn("size-5 sm:size-6", isFa && "rotate-180")}
+              className={cn("size-5 sm:size-6")}
               strokeWidth={1.75}
               aria-hidden
             />
@@ -295,7 +293,6 @@ export function GeneratorPageContent() {
         <p
           className={cn(
             "max-w-2xl text-[15px] leading-7 text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {t.subtitle}
@@ -311,7 +308,6 @@ export function GeneratorPageContent() {
           placeholder={t.selectPlaceholder}
           searchPlaceholder={t.searchPlaceholder}
           label={t.chooseType}
-          isFa={isFa}
           emptySearchLabel={t.noTopics}
         />
 
@@ -322,13 +318,11 @@ export function GeneratorPageContent() {
             selectedFields={fields}
             fieldLabels={fieldLabels}
             fieldOrder={visibleFields.map((f) => f.id)}
-            isFa={isFa}
           />
         ) : (
           <div
             className={cn(
               "rounded-2xl border border-dashed border-border px-4 py-10 text-center",
-              isFa && "font-fa-label",
             )}
           >
             <p className="text-[15px] font-medium text-foreground">
@@ -350,7 +344,6 @@ export function GeneratorPageContent() {
               onToggle={toggleField}
               fieldLabels={fieldLabels}
               legend={t.fieldsLegend}
-              isFa={isFa}
             />
             <QuantityAndModeRow
               quantity={quantity}
@@ -365,14 +358,12 @@ export function GeneratorPageContent() {
               modeHint={
                 mode === "payload" ? t.modePayloadHint : t.modeApiHint
               }
-              isFa={isFa}
             />
             <GenerateButton
               label={generating ? generatingLabel : generateLabel}
               loading={generating}
               progress={progress}
               onClick={onGenerate}
-              isFa={isFa}
               fullWidth
             />
           </section>
@@ -382,7 +373,6 @@ export function GeneratorPageContent() {
           <p
             className={cn(
               "text-[13px] text-red-600 dark:text-red-400",
-              isFa && "font-fa-label",
             )}
             role="alert"
           >
@@ -396,7 +386,6 @@ export function GeneratorPageContent() {
             records={records}
             topicId={topicId ?? "data"}
             topicLabel={t.topics[topicId ?? ""]?.name ?? topicId ?? "data"}
-            isFa={isFa}
             copyLabel={dict.common.copy}
             downloadLabel={t.download}
             createApiLabel={tmp.create}
@@ -421,7 +410,7 @@ export function GeneratorPageContent() {
             createdUrl={createdUrl}
             generatedLabel={t.generated.replace(
               "{n}",
-              records.length.toLocaleString(isFa ? "fa-IR" : "en-US"),
+              records.length.toLocaleString("en-US"),
             )}
           />
         ) : null}
@@ -444,14 +433,12 @@ function GenerateButton({
   loading,
   progress,
   onClick,
-  isFa,
   fullWidth,
 }: {
   label: string;
   loading: boolean;
   progress: number | null;
   onClick: () => void;
-  isFa: boolean;
   fullWidth?: boolean;
 }) {
   return (
@@ -463,7 +450,6 @@ function GenerateButton({
         className={cn(
           "inline-flex items-center justify-center rounded-md bg-[var(--request-fill)] px-4 py-2.5 text-[14px] font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40",
           fullWidth && "w-full",
-          isFa && "font-fa-label",
         )}
       >
         {label}

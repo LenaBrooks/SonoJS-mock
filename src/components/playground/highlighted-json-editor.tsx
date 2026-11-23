@@ -9,12 +9,10 @@ type Props = {
   value: string;
   onChange: (value: string) => void;
   rows?: number;
-  /** No outer border/radius — for embedding in a larger chrome. */
+  /** No outer border/radius - for embedding in a larger chrome. */
   bare?: boolean;
   /** Extra end padding so a corner control does not cover text. */
   padEnd?: boolean;
-  /** Use Vazirmatn for JSON string tokens (Persian sample data). */
-  persianStrings?: boolean;
 };
 
 /** Editable JSON with VS Code–style colors via a mirrored highlight layer. */
@@ -25,7 +23,6 @@ export function HighlightedJsonEditor({
   rows = 8,
   bare = false,
   padEnd = false,
-  persianStrings = false,
 }: Props) {
   const preRef = useRef<HTMLPreElement>(null);
   const [selecting, setSelecting] = useState(false);
@@ -44,9 +41,6 @@ export function HighlightedJsonEditor({
   }
 
   const padClass = padEnd ? "pe-11" : null;
-  const faFont = persianStrings
-    ? "[font-family:var(--font-jetbrains),var(--font-vazirmatn),ui-monospace,monospace]"
-    : "font-mono";
 
   return (
     <div
@@ -65,16 +59,14 @@ export function HighlightedJsonEditor({
           "code-scroll transition-opacity",
           selecting && "opacity-0",
           padClass,
-          faFont,
+          "font-mono",
         )}
         dir="ltr"
       >
         <code className="block min-w-0 whitespace-pre-wrap break-all">
           {display.split("\n").map((line, index, arr) => (
             <span key={index}>
-              {highlightCode(line.length ? line : " ", "json", {
-                persianStrings,
-              })}
+              {highlightCode(line.length ? line : " ", "json")}
               {index < arr.length - 1 ? "\n" : null}
             </span>
           ))}
@@ -99,7 +91,7 @@ export function HighlightedJsonEditor({
           "code-scroll ltr-tech whitespace-pre-wrap break-all",
           selecting ? "text-[#d4d4d4]" : "text-transparent",
           padClass,
-          faFont,
+          "font-mono",
         )}
       />
     </div>

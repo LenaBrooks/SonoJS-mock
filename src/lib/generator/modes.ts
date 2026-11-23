@@ -1,6 +1,6 @@
 import type { GeneratorFieldDef, GeneratorTopic } from "@/lib/generator/types";
 
-/** Fields typical of stored API records — excluded in “payload” (POST body) mode. */
+/** Fields typical of stored API records â€” excluded in â€œpayloadâ€ (POST body) mode. */
 export const GENERATOR_META_FIELDS = new Set([
   "id",
   "createdAt",
@@ -10,7 +10,7 @@ export const GENERATOR_META_FIELDS = new Set([
   "publishedAt",
 ]);
 
-/** Only these are auto on/off when switching API ↔ Post body. */
+/** Only these are auto on/off when switching API â†” Post body. */
 const MODE_TOGGLE_FIELDS = ["id", "createdAt", "updatedAt"] as const;
 
 export type GeneratorOutputMode = "payload" | "api";
@@ -98,7 +98,7 @@ export function visibleFieldsForMode(
   return sortFieldDefs(topic.fields);
 }
 
-/** Stable key order for generated records: id → … → createdAt → updatedAt. */
+/** Stable key order for generated records: id â†’ â€¦ â†’ createdAt â†’ updatedAt. */
 export function orderedFieldKeys(
   selected: ReadonlySet<string>,
   topic: GeneratorTopic,

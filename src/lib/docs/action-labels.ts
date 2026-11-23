@@ -1,4 +1,4 @@
-/** Shared action button labels — Playground + Request panels. */
+/** Shared action button labels - Playground + Request panels. */
 export const actionLabels = {
   list: "List",
   get: "Get",

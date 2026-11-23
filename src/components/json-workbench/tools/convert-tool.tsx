@@ -21,13 +21,11 @@ type ConvertModeToggleProps = {
 export function ConvertModeToggle({ mode, onChange }: ConvertModeToggleProps) {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
 
   return (
     <div
       className={cn(
         "inline-flex max-w-[min(100%,22rem)] shrink-0 flex-wrap justify-end rounded-md border border-border p-0.5 sm:max-w-none",
-        isFa && "font-fa-label",
       )}
     >
       {CONVERT_MODES.map((id) => {

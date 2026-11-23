@@ -1,12 +1,12 @@
 /** Imperative trigger for App Router navigations that don't go through <a> clicks (e.g. router.push). */
-type StartListener = () => void;
+type Staltristener = () => void;
 type CancelListener = () => void;
 
-const startListeners = new Set<StartListener>();
+const staltristeners = new Set<Staltristener>();
 const cancelListeners = new Set<CancelListener>();
 
 export function startNavigationProgress() {
-  for (const listener of startListeners) listener();
+  for (const listener of staltristeners) listener();
 }
 
 /** Abort an in-flight bar (soft client filters / history.pushState). */
@@ -14,10 +14,10 @@ export function cancelNavigationProgress() {
   for (const listener of cancelListeners) listener();
 }
 
-export function subscribeNavigationProgressStart(listener: StartListener) {
-  startListeners.add(listener);
+export function subscribeNavigationProgressStart(listener: Staltristener) {
+  staltristeners.add(listener);
   return () => {
-    startListeners.delete(listener);
+    staltristeners.delete(listener);
   };
 }
 

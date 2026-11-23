@@ -1,6 +1,6 @@
 /**
  * Distinct neutrals (not near-white) so each seed reads as a different
- * placeholder card — cool / warm / stone / slate / olive / charcoal.
+ * placeholder card - cool / warm / stone / slate / olive / charcoal.
  */
 const NEUTRAL_PALETTES = [
   { bg: "e8eaed", fg: "5f6368", muted: "80868b" },
@@ -91,7 +91,7 @@ export function buildPlaceholderSvg(input: {
   const fg = input.fg.replace(/^#/, "");
   const muted = (input.muted ?? mutedFromFg(fg)).replace(/^#/, "");
   const minSide = Math.min(w, h);
-  // Scale with the image — small canvases stay readable, large ones stay proportional.
+  // Scale with the image - small canvases stay readable, large ones stay proportional.
   const titleSize = Math.max(7, Math.round(minSide * 0.08));
   const sizeLabelSize = Math.max(6, Math.round(minSide * 0.048));
   const showIcon = minSide >= 64;

@@ -16,7 +16,7 @@ const listResponse = `{
       "postId": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
       "name": "Alex Rivera",
       "email": "alex@example.com",
-      "body": "Nice post — thanks for sharing.",
+      "body": "Nice post - thanks for sharing.",
       "createdAt": "2026-09-14T10:00:00.000Z",
       "updatedAt": "2026-09-14T10:00:00.000Z"
     }

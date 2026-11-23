@@ -12,13 +12,13 @@ import {
 import {
   UI_LOCALE_EVENT,
   type UiLocale,
-} from "@/lib/i18n/constants";
+} from "@/lib/locale/constants";
 import {
   applyDocumentLocale,
   readStoredUiLocale,
   writeUiLocale,
-} from "@/lib/i18n/client-locale";
-import { getDictionary, type Messages } from "@/lib/i18n/get-dictionary";
+} from "@/lib/locale/client-locale";
+import { getDictionary, type Messages } from "@/lib/dictionary";
 
 type UiLocaleContextValue = {
   locale: UiLocale;
@@ -36,32 +36,26 @@ export function UiLocaleProvider({
   children: ReactNode;
   initialLocale?: UiLocale;
 }) {
-  const [locale, setLocaleState] = useState<UiLocale>(initialLocale);
+  const [locale, setLocaleState] = useState<UiLocale>("en");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const stored = readStoredUiLocale();
-    setLocaleState(stored);
-    applyDocumentLocale(stored);
-    // Keep API sample-data preference aligned with UI on load.
-    writeUiLocale(stored);
+    applyDocumentLocale("en");
+    writeUiLocale("en");
     setReady(true);
 
     function onLocale(e: Event) {
       const next = (e as CustomEvent<UiLocale>).detail;
-      if (next === "en" || next === "fa") {
-        setLocaleState(next);
-        applyDocumentLocale(next);
-      }
+      if (next === "en") applyDocumentLocale("en");
     }
     window.addEventListener(UI_LOCALE_EVENT, onLocale);
     return () => window.removeEventListener(UI_LOCALE_EVENT, onLocale);
   }, []);
 
-  const setLocale = useCallback((next: UiLocale) => {
-    writeUiLocale(next);
-    setLocaleState(next);
-    applyDocumentLocale(next);
+  const setLocale = useCallback((_next: UiLocale) => {
+    writeUiLocale("en");
+    setLocaleState("en");
+    applyDocumentLocale("en");
   }, []);
 
   const value = useMemo(

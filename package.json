@@ -1,5 +1,5 @@
 {
-  "name": "mockdata",
+  "name": "sonojs-mock",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,6 +20,7 @@
     "clsx": "^2.1.1",
     "cn": "^0.3.3",
     "drizzle-orm": "^0.45.4",
+    "geist": "^1.9.2",
     "jsonrepair": "^3.15.0",
     "lucide-react": "^1.78.0",
     "next": "^16.4.6",

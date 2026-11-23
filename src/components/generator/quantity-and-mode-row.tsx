@@ -19,7 +19,6 @@ export function QuantityAndModeRow({
   modePayload,
   modeApi,
   modeHint,
-  isFa,
 }: {
   quantity: number;
   onQuantityChange: (n: number) => void;
@@ -31,7 +30,6 @@ export function QuantityAndModeRow({
   modePayload: string;
   modeApi: string;
   modeHint: string;
-  isFa: boolean;
 }) {
   const isPreset = (GENERATOR_QTY_PRESETS as readonly number[]).includes(
     quantity,
@@ -44,7 +42,6 @@ export function QuantityAndModeRow({
         <p
           className={cn(
             "text-[13px] font-medium text-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {recordsLabel}
@@ -55,22 +52,6 @@ export function QuantityAndModeRow({
           aria-label={recordsLabel}
           dir="ltr"
         >
-          {isFa ? (
-            <button
-              type="button"
-              onClick={() => setCustomOpen(true)}
-              aria-pressed={customOpen}
-              className={cn(
-                segmentBtn,
-                "font-fa-label",
-                customOpen
-                  ? "bg-[var(--request)]/15 font-medium text-foreground"
-                  : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
-              )}
-            >
-              {customLabel}
-            </button>
-          ) : null}
           {GENERATOR_QTY_PRESETS.map((n) => {
             const selected = !customOpen && quantity === n;
             return (
@@ -87,30 +68,27 @@ export function QuantityAndModeRow({
                   selected
                     ? "bg-[var(--request)]/15 font-medium text-foreground"
                     : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
-                  isFa && "font-fa-label",
                 )}
               >
-                {n.toLocaleString(isFa ? "fa-IR" : "en-US", {
+                {n.toLocaleString("en-US", {
                   useGrouping: false,
                 })}
               </button>
             );
           })}
-          {!isFa ? (
-            <button
-              type="button"
-              onClick={() => setCustomOpen(true)}
-              aria-pressed={customOpen}
-              className={cn(
-                segmentBtn,
-                customOpen
-                  ? "bg-[var(--request)]/15 font-medium text-foreground"
-                  : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
-              )}
-            >
-              {customLabel}
-            </button>
-          ) : null}
+          <button
+            type="button"
+            onClick={() => setCustomOpen(true)}
+            aria-pressed={customOpen}
+            className={cn(
+              segmentBtn,
+              customOpen
+                ? "bg-[var(--request)]/15 font-medium text-foreground"
+                : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
+            )}
+          >
+            {customLabel}
+          </button>
         </div>
         {customOpen ? (
           <input
@@ -128,8 +106,7 @@ export function QuantityAndModeRow({
               onQuantityChange(Math.min(1000, Math.max(1, Math.floor(n))));
             }}
             className={cn(
-              "h-9 w-28 rounded-lg border border-border bg-background px-3 text-[13px] text-foreground outline-none focus-visible:border-foreground/30 focus-visible:ring-2 focus-visible:ring-foreground/15 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-              isFa && "font-fa-label",
+              "field-focus h-9 w-28 rounded-lg border border-border bg-background px-3 text-[13px] text-foreground [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
             )}
             dir="ltr"
             aria-label={customLabel}
@@ -141,7 +118,6 @@ export function QuantityAndModeRow({
         <p
           className={cn(
             "text-[13px] font-medium text-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {modeLabel}
@@ -171,7 +147,6 @@ export function QuantityAndModeRow({
                   active
                     ? "bg-[var(--request)]/15 font-medium text-foreground"
                     : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
-                  isFa && "font-fa-label",
                 )}
               >
                 {label}
@@ -182,7 +157,6 @@ export function QuantityAndModeRow({
         <p
           className={cn(
             "text-[11px] leading-4 text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {modeHint}

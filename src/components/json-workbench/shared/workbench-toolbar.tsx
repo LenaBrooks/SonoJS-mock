@@ -48,7 +48,7 @@ type ActionButtonProps = {
   disabled?: boolean;
 };
 
-/** Action button — same bordered style as Sort (not green Run). */
+/** Action button - same bordered style as Sort (not green Run). */
 export function RunButton({
   onClick,
   label,

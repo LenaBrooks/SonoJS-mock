@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import { CopyButton } from "@/components/docs/copy-button";
-import { useApiLocale, withApiLang } from "@/lib/api/use-api-locale";
+import { apiPath } from "@/lib/api/use-api-locale";
 
-/** Live API base path — appends ?lang=fa when FA locale is selected. */
 export function ApiBasePath({ path }: { path: string }) {
-  const locale = useApiLocale();
-  const href = withApiLang(path, locale);
+  const href = apiPath(path);
 
   return (
     <div className="inline-flex max-w-full items-center gap-1 ltr-tech" dir="ltr">

@@ -5,7 +5,7 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = {
   ...createPageMetadata({
     title: "Page not found",
-    description: "This page does not exist on MockData.",
+    description: "This page does not exist on SonoJS Mock.",
     path: "/404",
     noIndex: true,
   }),

@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   BookOpen,
   Braces,
@@ -9,7 +10,6 @@ import {
   Home,
   ImageIcon,
   Layers,
-  Mail,
   Menu,
   Moon,
   Sparkles,
@@ -18,7 +18,6 @@ import {
   Timer,
   X,
 } from "lucide-react";
-import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ResourcesNavMenu } from "@/components/layout/resources-nav-menu";
 import { TemporaryApiLabel } from "@/components/layout/temporary-api-label";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -38,14 +37,19 @@ function preloadResourceImages() {
   }
 }
 
+function navActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function SiteHeader() {
-  const { dict, locale } = useUiLocale();
+  const pathname = usePathname();
+  const { dict } = useUiLocale();
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const panelId = useId();
   const resourcesId = useId();
-  const isFa = locale === "fa";
   const isDark = theme === "dark";
 
   useEffect(() => {
@@ -74,17 +78,21 @@ export function SiteHeader() {
     setMenuOpen(false);
   }
 
-  const navLinkClass = cn(
-    "inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-1.5 text-[12px] text-muted-foreground whitespace-nowrap transition-colors md:gap-1.5 md:px-2 md:text-[13px]",
-    "hover:bg-[var(--surface-hover)] hover:text-foreground",
-    isFa && "font-fa-label",
-  );
+  function navLinkClass(href: string, compact = false) {
+    const active = navActive(pathname, href);
+    return cn(
+      "relative inline-flex shrink-0 cursor-pointer items-center whitespace-nowrap transition-colors",
+      compact ? "gap-1 px-1.5 py-1 text-[12px] md:px-2 md:text-[13px]" : "gap-1 px-2.5 py-1 text-sm font-medium",
+      active
+        ? "text-primary underline decoration-primary decoration-2 underline-offset-8"
+        : "text-muted-foreground hover:text-foreground",
+    );
+  }
 
   const newBadge = (
     <span
       className={cn(
-        "inline-flex items-center rounded-md bg-[var(--request-fill)]/15 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--request)]",
-        isFa && "font-fa-label",
+        "inline-flex items-center rounded-md bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary",
       )}
     >
       {dict.common.new}
@@ -96,7 +104,6 @@ export function SiteHeader() {
   const drawerItemClass = cn(
     "flex w-full items-center gap-2.5 px-4 py-2.5 text-start text-[13px] text-foreground transition-colors",
     "hover:bg-[var(--surface-hover)]",
-    isFa && "font-fa-label",
   );
 
   const menuButton = (
@@ -121,91 +128,104 @@ export function SiteHeader() {
       href="/"
       aria-label={dict.common.home}
       title={dict.common.home}
-      className="hidden shrink-0 items-center rounded-md text-foreground transition-colors hover:opacity-80 md:inline-flex"
+      className="me-1 flex shrink-0 cursor-pointer items-center gap-2 rounded-md outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring md:me-2"
       onClick={closeMenu}
     >
-      <span
-        className="text-[15px] font-semibold tracking-tight ltr-tech"
-        dir="ltr"
-      >
-        mock.sonojs.com
+      <img
+        src="/images/logos/logo.svg"
+        alt=""
+        aria-hidden
+        width={20}
+        height={22}
+        className="h-[22px] w-auto shrink-0"
+      />
+      <span className="text-sm font-bold leading-none tracking-tight text-foreground">
+        Mock
+        <span className="sr-only"> — SonoJS Mock API</span>
       </span>
     </Link>
   );
 
   return (
-    <>
-      <header className="sticky top-0 z-40 overflow-x-clip border-b border-border bg-[var(--header-bg)] backdrop-blur-md">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-1.5 px-3 sm:gap-3 sm:px-6">
+  <div
+    data-site-header-stack=""
+    className="sticky top-0 z-50 w-full transition-transform duration-300 ease-out"
+  >
+    <header
+      data-site-header=""
+      className="w-full overflow-x-clip border-b border-white/20 bg-white/40 backdrop-blur-2xl backdrop-saturate-150 transition-[background-color,backdrop-filter,border-color] duration-300 ease-out supports-backdrop-filter:bg-white/25 dark:border-white/10 dark:bg-background/40 dark:supports-backdrop-filter:bg-background/25"
+    >
+      <div className="mx-auto w-full max-w-6xl px-3 sm:px-6">
+        <div className="relative flex h-(--nav-height) items-center gap-1.5 sm:gap-2.5">
           <div className="md:hidden">{menuButton}</div>
           {brand}
 
           <nav
-            className={cn(
-              "header-nav-scroll flex min-w-0 flex-1 items-center gap-0 overflow-x-auto overscroll-x-contain md:hidden",
-              // FA header is RTL, so reverse keeps Playground near the menu and Resources last.
-              isFa && "flex-row-reverse",
-            )}
+            className="header-nav-scroll flex min-w-0 flex-1 items-center gap-0 overflow-x-auto overscroll-x-contain md:hidden"
             aria-label={dict.header.primaryNav}
             dir="ltr"
           >
-            <Link href="/playground" className={navLinkClass}>
+            <Link href="/playground" className={navLinkClass("/playground", true)}>
               {dict.common.playground}
             </Link>
-            <Link href="/temporary" className={navLinkClass}>
+            <Link href="/temporary" className={navLinkClass("/temporary", true)}>
               {temporaryLabel}
             </Link>
-            <Link href="/generator" className={navLinkClass}>
+            <Link href="/generator" className={navLinkClass("/generator", true)}>
               {dict.common.generator}
             </Link>
-            <Link href="/image-generator" className={navLinkClass}>
+            <Link href="/image-generator" className={navLinkClass("/image-generator", true)}>
               {dict.common.imageGenerator}
             </Link>
-            <ResourcesNavMenu
-              linkClassName="px-1.5 py-1.5 text-[12px] md:px-2 md:text-[13px]"
-            />
+            <ResourcesNavMenu compact />
           </nav>
 
           <nav
             className="hidden min-w-0 flex-1 items-center gap-0.5 overflow-x-auto md:flex"
             aria-label={dict.header.primaryNav}
           >
-            <Link href="/playground" className={navLinkClass}>
+            <Link href="/playground" className={navLinkClass("/playground")}>
               {dict.common.playground}
             </Link>
-            <Link href="/temporary" className={navLinkClass}>
+            <Link href="/temporary" className={navLinkClass("/temporary")}>
               {temporaryLabel}
             </Link>
-            <Link href="/generator" className={navLinkClass}>
+            <Link href="/generator" className={navLinkClass("/generator")}>
               {dict.common.generator}
             </Link>
-            <Link href="/image-generator" className={navLinkClass}>
+            <Link href="/image-generator" className={navLinkClass("/image-generator")}>
               {dict.common.imageGenerator}
               {newBadge}
             </Link>
-            <Link href="/json" className={navLinkClass}>
+            <Link href="/json" className={navLinkClass("/json")}>
               {dict.common.jsonWorkbench}
             </Link>
             <ResourcesNavMenu />
-            <Link href="/docs" className={navLinkClass}>
+            <Link href="/docs" className={navLinkClass("/docs")}>
               {dict.common.docs}
             </Link>
           </nav>
 
-          <div className="hidden shrink-0 items-center gap-0.5 md:flex">
-            <LanguageSwitcher />
-            <ThemeToggle />
+          <div className="ms-auto flex shrink-0 items-center gap-1.5">
             <Link
-              href="/contact"
-              aria-label={dict.header.contact}
-              title={dict.header.contact}
-              className="grid size-9 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-[var(--surface-hover)] hover:text-foreground"
+              href="https://sonojs.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden rounded-md px-2 py-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground lg:inline-flex"
             >
-              <Mail className="size-4" strokeWidth={1.75} aria-hidden />
+              SonoJS
             </Link>
+            <span
+              aria-hidden
+              className="mx-0.5 hidden h-4 w-px shrink-0 bg-border lg:inline-block"
+            />
+            <div className="hidden md:flex">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
-      </header>
+      </div>
+    </header>
 
       {menuOpen ? (
         <div className="md:hidden" id={panelId}>
@@ -223,16 +243,13 @@ export function SiteHeader() {
             className={cn(
               "fixed inset-y-0 z-50 flex w-[min(16.5rem,85vw)] flex-col bg-background",
               "animate-in fade-in-0 duration-200",
-              isFa
-                ? "right-0 border-s border-border slide-in-from-right-3"
-                : "left-0 border-e border-border slide-in-from-left-3",
+              "left-0 border-e border-border slide-in-from-left-3",
             )}
           >
             <div className="flex h-12 shrink-0 items-center justify-between border-b border-border px-4">
               <span
                 className={cn(
                   "text-[14px] font-medium text-foreground",
-                  isFa && "font-fa-label",
                 )}
               >
                 {dict.header.menu}
@@ -358,7 +375,6 @@ export function SiteHeader() {
                           onClick={closeMenu}
                           className={cn(
                             "flex w-full items-center gap-2.5 px-4 py-2 ps-11 text-start text-[12px] text-muted-foreground transition-colors hover:bg-[var(--surface-hover)] hover:text-foreground",
-                            isFa && "font-fa-label",
                           )}
                         >
                           <img
@@ -393,7 +409,6 @@ export function SiteHeader() {
 
               <div className="my-1 border-t border-border" />
 
-              <LanguageSwitcher className="mx-3 my-1 block" drawer />
               <button
                 type="button"
                 onClick={toggleTheme}
@@ -420,22 +435,10 @@ export function SiteHeader() {
                   {isDark ? dict.header.dark : dict.header.light}
                 </span>
               </button>
-              <Link
-                href="/contact"
-                onClick={closeMenu}
-                className={drawerItemClass}
-              >
-                <Mail
-                  className={drawerIconClass}
-                  strokeWidth={1.75}
-                  aria-hidden
-                />
-                {dict.header.contact}
-              </Link>
             </nav>
           </aside>
         </div>
       ) : null}
-    </>
+  </div>
   );
 }

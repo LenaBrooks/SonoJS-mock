@@ -15,7 +15,6 @@ const hiddenPrefixes = [
   "/json",
   "/temporary",
   "/image-generator",
-  "/contact",
   "/auth",
 ];
 
@@ -56,7 +55,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label={dict.header.primaryNav}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-[var(--header-bg)]/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-6px_20px_rgba(0,0,0,0.06)] backdrop-blur-md md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/20 bg-white/80 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-6px_20px_rgba(0,0,0,0.06)] backdrop-blur-2xl backdrop-saturate-150 supports-backdrop-filter:bg-white/60 dark:border-white/10 dark:bg-background/80 dark:supports-backdrop-filter:bg-background/60 md:hidden"
     >
       <div className="mx-auto flex max-w-md gap-0.5">
         {items.map(({ href, label, icon: Icon }) => {
@@ -68,8 +67,7 @@ export function MobileBottomNav() {
               aria-current={active ? "page" : undefined}
               className={cn(
                 "flex min-w-0 flex-1 flex-col items-center gap-1 overflow-hidden rounded-lg px-0.5 py-1.5 text-[10px] text-muted-foreground transition-colors",
-                "active:scale-[0.98]",
-                active && "bg-[var(--request)]/10 text-[var(--request)]",
+                active && "bg-primary/10 text-primary",
               )}
             >
               <Icon className="size-[18px]" strokeWidth={active ? 2 : 1.75} aria-hidden />

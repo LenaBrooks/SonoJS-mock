@@ -1,6 +1,6 @@
 /** Shared sample for workbench demos. */
 export const WORKBENCH_SAMPLE_JSON = `{
-  "name": "MockData",
+  "name": "SonoJS Mock",
   "active": true,
   "count": 3,
   "note": "",
@@ -9,30 +9,30 @@ export const WORKBENCH_SAMPLE_JSON = `{
   "meta": {},
   "skills": ["React", "Next.js"],
   "address": {
-    "city": "Tehran"
+    "city": "London"
   }
 }`;
 
 /** Nested sample for JSONPath demos. */
 export const WORKBENCH_JSONPATH_SAMPLE = `{
   "company": {
-    "name": "MockData",
+    "name": "SonoJS Mock",
     "founded": 2024
   },
   "users": [
     {
-      "name": "Milad",
+      "name": "Jordan Lee",
       "age": 32,
       "profile": {
-        "city": "Tehran",
+        "city": "London",
         "roles": ["admin", "editor"]
       }
     },
     {
-      "name": "Ali",
+      "name": "Taylor Brooks",
       "age": 28,
       "profile": {
-        "city": "Isfahan",
+        "city": "Denver",
         "roles": ["member"]
       }
     }
@@ -41,8 +41,8 @@ export const WORKBENCH_JSONPATH_SAMPLE = `{
     {
       "id": "frontend",
       "members": [
-        { "email": "milad@example.com" },
-        { "email": "sara@example.com" }
+        { "email": "jordan.lee@example.com" },
+        { "email": "taylor.brooks@example.com" }
       ]
     }
   ]

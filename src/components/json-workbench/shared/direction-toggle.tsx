@@ -11,7 +11,7 @@ type Props = {
   className?: string;
 };
 
-/** Labels with a single swap icon between them (RTL-safe). */
+/** Labels with a single swap icon between them (ltr-safe). */
 export function DirectionToggle({
   fromLabel,
   toLabel,

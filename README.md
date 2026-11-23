@@ -1,23 +1,23 @@
-# MockData 
+# SonoJS Mock 
 
-Fake REST APIs with real JSON — a docs-first playground for frontends, demos, and prototypes.
+Fake REST APIs with real JSON - a docs-first playground for frontends, demos, and prototypes.
 
 Hit live endpoints, get predictable seeded responses, try auth flows, then wire the same URLs into your UI. No backend scaffolding required.
 
 ## Features
 
-- **10 live resources** — Auth, Users, Posts, Comments, Albums, Photos, Todos, Products, Notifications, Countries
-- **Temporary API** — paste your own JSON and get a short-lived public REST URL (`/api/t/…`), no account, up to 5 live at a time
-- **Fake Data Generator** — schema-driven fake JSON at `/generator` (people, ecommerce, content, and more); copy, download, or Create API
-- **Image Generator** — placeholder SVG or real photos by URL at `/image/{w}/{h}` (optional `?type=real`, `?seed=`)
-- **JSON Workbench** (in development) — format, validate, diff, search, and transform JSON in the browser at `/json` (TypeScript, Zod, YAML, CSV, utilities)
-- **Playground** — in-browser request runner; request/response state survives client-side navigation between resources and routes
-- **Full CRUD** — list, create, read, update, delete with pagination, search, and filters
-- **Persian data** — add `?lang=fa` for Iranian names and copy (English is default); Generator FA UI uses Persian locale packs
-- **Docs** — platform guide plus per-resource docs and live Preview UIs
-- **Mock controls** — `?delay=` and `?status=` for loading and error UI demos
-- **OpenAPI 3.1** — downloadable at `/openapi.json` for Postman, Insomnia, or codegen
-- **Shared demo DB** — production seed data resets automatically once per day
+- **10 live resources** - Auth, Users, Posts, Comments, Albums, Photos, Todos, Products, Notifications, Countries
+- **Temporary API** - paste your own JSON and get a short-lived public REST URL (`/api/t/…`), no account, up to 5 live at a time
+- **Fake Data Generator** - schema-driven fake JSON at `/generator` (people, ecommerce, content, and more); copy, download, or Create API
+- **Image Generator** - placeholder SVG or real photos by URL at `/image/{w}/{h}` (optional `?type=real`, `?seed=`)
+- **JSON Workbench** (in development) - format, validate, diff, search, and transform JSON in the browser at `/json` (TypeScript, Zod, YAML, CSV, utilities)
+- **Playground** - in-browser request runner; request/response state survives client-side navigation between resources and routes
+- **JSONPlaceholder-style catalog** - stable GET on shared seed data; writes return `403 READ_ONLY` in production (set `CATALOG_WRITABLE=true` locally for real CRUD)
+- **English-only data** - all seeded resources and generated records use English text
+- **Docs** - platform guide plus per-resource docs and live Preview UIs
+- **Mock controls** - `?delay=` and `?status=` for loading and error UI demos
+- **OpenAPI 3.1** - downloadable at `/openapi.json` for Postman, Insomnia, or codegen
+- **Shared demo DB** - one Postgres seed for all visitors; no automatic wipe
 
 ## Quick start
 
@@ -38,40 +38,38 @@ Open [http://localhost:3000](http://localhost:3000).
 | Variable | Required | Purpose |
 |----------|----------|---------|
 | `DATABASE_URL` | Yes | Postgres connection string |
-| `ADMIN_SECRET` | For manual reset | Protects `POST /api/admin/reset` and the Docs reset panel |
-| `CRON_SECRET` | Production cron | Protects `GET /api/cron/reset` (Vercel sends it as `Authorization: Bearer …`) |
+| `CATALOG_WRITABLE` | Local dev optional | Set to `true` to allow POST/PATCH/DELETE on catalog APIs (default: writable in dev, read-only in production) |
 
 ## Product surfaces
 
 | Path | Purpose |
 |------|---------|
 | `/` | Resource catalog + search |
-| `/docs` | Platform guide (requests, errors, rate limit, reset) |
+| `/docs` | Platform guide (requests, errors, rate limit, shared data) |
 | `/playground` | Try live requests in the browser (state kept across SPA navigation) |
 | `/temporary` | Paste JSON → short-lived public REST URL |
 | `/generator` | Fake Data Generator → copy / download / Create API |
 | `/image-generator` | Build placeholder image URLs (SVG or real) |
-| `/json` | JSON Workbench (in development) — format, compare, transform |
-| `/image/{w}/{h}` | Image API — SVG body or 302 to Picsum (`?type=real`) |
+| `/json` | JSON Workbench (in development) - format, compare, transform |
+| `/image/{w}/{h}` | Image API - SVG body or 302 to Picsum (`?type=real`) |
 | `/users`, `/posts`, … | Per-resource docs (+ Preview where available) |
-| `/contact` | Contact form |
 | `/api/…` | Live JSON APIs (seeded resources) |
 | `/api/t/…` | Temporary user-published JSON APIs |
 | `/openapi.json` | OpenAPI 3.1 document |
 
 ## Shared demo data
 
-Everyone shares one production database. You can create, update, and delete freely.
+Everyone reads the same seeded catalog (like JSONPlaceholder). **GET** always works. **POST, PATCH, and DELETE** on `/api/users`, `/api/posts`, and other catalog routes return `403` with `error.code: "READ_ONLY"` in production so the dataset stays stable.
 
-On Vercel, seed data **resets once per day** via `GET /api/cron/reset`. Treat it as a disposable demo — not private storage.
+For mutable data, use **Temporary API** (`/temporary` → `/api/t/…`).
 
-Locally, re-seed with:
+Locally, reload seed data with:
 
 ```bash
 npm run db:seed
 ```
 
-Or use the Docs reset panel / `POST /api/admin/reset` with `ADMIN_SECRET`.
+Optional: `CATALOG_WRITABLE=true` in `.env.local` to exercise real CRUD against Postgres during development.
 
 ## Resources
 
@@ -112,9 +110,9 @@ curl -X POST http://localhost:3000/api/t/<id> \
   -d '{"name":"Ada"}'
 ```
 
-No account required. Treat the link like a password — anyone with it can read and change the data until it expires. This is separate from the shared catalog resources above.
+No account required. Treat the link like a password - anyone with it can read and change the data until it expires. This is separate from the shared catalog resources above.
 
-You can also publish from the **Fake Data Generator** (`Create API`) — same Temporary backend and limits.
+You can also publish from the **Fake Data Generator** (`Create API`) - same Temporary backend and limits.
 
 **Limits**
 
@@ -132,14 +130,14 @@ You can also publish from the **Fake Data Generator** (`Create API`) — same Te
 
 ### Fake Data Generator
 
-Open [/generator](https://mock.sonojs.com/generator) (or locally `/generator`). Generation runs **in the browser** — no backend call for the JSON itself.
+Open [/generator](https://mock.sonojs.com/generator) (or locally `/generator`). Generation runs **in the browser** - no backend call for the JSON itself.
 
 | Capability | Detail |
 |------------|--------|
 | Data types | People, ecommerce, content, media, business, location (users, products, orders, posts, …) |
 | Quantity | Presets up to **1,000** records |
 | Output shape | **POST body** (no id/timestamps) or **API record** (with id / createdAt / updatedAt) |
-| Locale packs | Site UI **FA** → Persian names/places; **EN** → multi-country English packs (IR excluded from “all”) |
+| Locale packs | English country packs for generated names, places, and addresses |
 | Preview | Live sample card for the selected type and fields |
 | Export | Copy JSON or TypeScript types, download `.json` |
 | Create API | Same Temporary API flow (lifetime select + publish); max **500** items / **64 KB** per publish |
@@ -151,7 +149,7 @@ Open [/image-generator](https://mock.sonojs.com/image-generator) (or locally `/i
 
 | Mode | URL | Behavior |
 |------|-----|----------|
-| SVG (default) | `/image/800/600` | Neutral placeholder SVG from MockData |
+| SVG (default) | `/image/800/600` | Neutral placeholder SVG from SonoJS Mock |
 | Real photo | `/image/800/600?type=real` | `302` redirect to [Picsum](https://picsum.photos) |
 | Stable | add `?seed=my-seed` | Same SVG colors or same real photo every time |
 
@@ -202,50 +200,26 @@ curl "http://localhost:3000/api/users?delay=1000"
 curl "http://localhost:3000/api/posts/1?status=404"
 ```
 
-## Persian (`lang=fa`)
+## English-only API
 
-Responses are **English by default**. For Persian (Iranian names, usernames, emails, and copy), add `lang=fa`:
+Responses are **English by default**. The API accepts English data only; no language query parameter is required:
 
 ```bash
-curl "http://localhost:3000/api/users?limit=3&lang=fa"
+curl "http://localhost:3000/api/users?limit=3"
 ```
 
 ```js
-const res = await fetch("/api/users?limit=3&lang=fa");
-const { data, font } = await res.json();
-// font.family / font.cssUrl → Vazirmatn for rendering Persian text
+const res = await fetch("/api/users?limit=3");
+const { data } = await res.json();
 ```
 
 - Works on list, single-item, create/update, and auth responses
-- FA responses set `Content-Language: fa` and include a `font` object
-- The site header **EN | FA** toggle only appends `?lang=fa` in the Playground — the API does not read cookies
-
-See also [Docs → Language](https://mock.sonojs.com/docs#language).
 
 ## Rate limit
 
 `/api/*` allows about **60 requests per IP per minute**.
 
 Responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset`. Over limit returns `429` with `Retry-After`.
-
-## Admin & cron reset
-
-**Manual** (local or production):
-
-```bash
-curl -X POST http://localhost:3000/api/admin/reset \
-  -H "x-admin-key: $ADMIN_SECRET"
-```
-
-Also accepts `Authorization: Bearer <ADMIN_SECRET>`.
-
-**Automatic** (production):
-
-1. Set `CRON_SECRET` in the Vercel project env (16+ random characters).
-2. Deploy so `vercel.json` registers the daily cron (`0 0 * * *` → `/api/cron/reset`, around midnight UTC).
-3. Vercel sends `Authorization: Bearer <CRON_SECRET>` automatically.
-
-> On Hobby, cron runs at most once per day (this project matches that). Timing may drift by up to ~59 minutes.
 
 ## Scripts
 
@@ -264,4 +238,4 @@ Also accepts `Authorization: Bearer <ADMIN_SECRET>`.
 - **Next.js 16** (App Router) + TypeScript + Tailwind CSS
 - **Drizzle ORM** + Neon / Postgres
 - **Zod** request validation
-- Deployed on **Vercel** (optional daily cron reset)
+- Deployed on **Vercel** (read-only catalog in production by default)

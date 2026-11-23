@@ -16,15 +16,14 @@ export function ResourceDocsHeader({
   summary?: string;
 }) {
   const { dict, locale } = useUiLocale();
-  const isFa = locale === "fa";
   const cat = dict.catalog[resourceId];
   const title = cat?.title ?? resourceId;
   const blurb = cat?.summary ?? summary ?? "";
   const backLabel = dict.resourceDocs.backToResources;
 
   const actionClass = cn(
-    "inline-flex items-center gap-1.5 rounded-md border border-border bg-muted/40 px-3 py-1.5 text-[12px] hover:border-[var(--request)]/40",
-    isFa && "font-fa-label",
+    "inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-[12px] font-medium text-foreground",
+    "bg-white hover:border-primary/40 dark:bg-card",
   );
 
   const actions = (
@@ -56,12 +55,12 @@ export function ResourceDocsHeader({
             className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <ArrowLeft
-              className={cn("size-5 sm:size-6", isFa && "rotate-180")}
+              className={cn("size-5 sm:size-6")}
               strokeWidth={1.75}
               aria-hidden
             />
           </Link>
-          <span className={cn("truncate", isFa && "font-fa-label")}>{title}</span>
+          <span className={cn("truncate")}>{title}</span>
           <LiveBadge />
         </h1>
         <div className="hidden shrink-0 flex-nowrap items-center gap-2 sm:flex">
@@ -73,7 +72,6 @@ export function ResourceDocsHeader({
         <p
           className={cn(
             "max-w-xl text-[14px] leading-6 text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {blurb}

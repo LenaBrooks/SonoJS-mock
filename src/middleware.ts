@@ -1,11 +1,24 @@
 import { NextResponse, type NextRequest } from "next/server";
 import {
+  catalogMutationsEnabled,
+  catalogReadOnlyResponse,
+  isCatalogMutationRequest,
+} from "@/lib/api/catalog-policy";
+import {
   checkRateLimit,
   getClientIp,
   rateLimitHeaders,
 } from "@/lib/api/rate-limit";
 
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  if (
+    !catalogMutationsEnabled() &&
+    isCatalogMutationRequest(request.method, pathname)
+  ) {
+    return catalogReadOnlyResponse();
+  }
+
   const ip = getClientIp(request);
   const result = checkRateLimit(ip);
   const headers = rateLimitHeaders(result);

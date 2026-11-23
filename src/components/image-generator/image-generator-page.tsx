@@ -31,7 +31,6 @@ function clampDim(n: number) {
 export function ImageGeneratorPageContent() {
   const { dict, locale } = useUiLocale();
   const t = dict.imageGenerator;
-  const isFa = locale === "fa";
 
   const [type, setType] = useState<ImageType>("svg");
   const [width, setWidth] = useState(800);
@@ -111,10 +110,9 @@ export function ImageGeneratorPageContent() {
 
   const labelClass = cn(
     "text-[13px] font-medium text-foreground",
-    isFa && "font-fa-label",
   );
   const inputClass =
-    "box-border h-9 w-full rounded-md border border-border bg-muted px-3 text-[13px] outline-none focus-visible:border-[var(--request)]/50";
+    "box-border h-9 w-full rounded-md border border-border bg-muted px-3 text-[13px] field-focus";
 
   const sizeSelectId = useId();
 
@@ -133,7 +131,6 @@ export function ImageGeneratorPageContent() {
         <h1
           className={cn(
             "inline-flex min-w-0 items-center gap-2.5 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl",
-            isFa && "font-fa-label",
           )}
         >
           <Link
@@ -143,7 +140,7 @@ export function ImageGeneratorPageContent() {
             className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <ArrowLeft
-              className={cn("size-5 sm:size-6", isFa && "rotate-180")}
+              className={cn("size-5 sm:size-6")}
               strokeWidth={1.75}
               aria-hidden
             />
@@ -153,7 +150,6 @@ export function ImageGeneratorPageContent() {
         <p
           className={cn(
             "max-w-2xl text-[15px] leading-7 text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {t.blurb}
@@ -270,8 +266,7 @@ export function ImageGeneratorPageContent() {
                     setHeight(preset.h);
                   }}
                   className={cn(
-                    "h-9 w-full appearance-none rounded-md border border-border bg-muted pe-9 ps-3 text-[13px] outline-none transition-colors focus-visible:border-[var(--request)]/50",
-                    isFa && "font-fa-label",
+                    "field-focus h-9 w-full appearance-none rounded-md border border-border bg-muted pe-9 ps-3 text-[13px]",
                   )}
                 >
                   {IMAGE_SIZE_PRESETS.map((p) => (
@@ -295,7 +290,6 @@ export function ImageGeneratorPageContent() {
             disabled={generating}
             className={cn(
               "h-10 w-full rounded-md bg-[var(--request-fill)] text-[14px] font-semibold text-white disabled:opacity-50",
-              isFa && "font-fa-label",
             )}
           >
             {generating ? t.generating : t.generate}
@@ -306,7 +300,6 @@ export function ImageGeneratorPageContent() {
           <p
             className={cn(
               "text-[12px] font-medium text-[var(--response)]",
-              isFa && "font-fa-label",
             )}
           >
             {t.yourUrl}
@@ -329,7 +322,7 @@ export function ImageGeneratorPageContent() {
         </div>
 
         <section className="space-y-3">
-          <h2 className={cn("text-[14px] font-medium", isFa && "font-fa-label")}>
+          <h2 className={cn("text-[14px] font-medium")}>
             {t.preview}
           </h2>
           <div className="relative overflow-hidden rounded-xl border border-border bg-muted/30">
@@ -351,7 +344,7 @@ export function ImageGeneratorPageContent() {
         </section>
 
         <section className="space-y-3">
-          <h2 className={cn("text-[14px] font-medium", isFa && "font-fa-label")}>
+          <h2 className={cn("text-[14px] font-medium")}>
             {t.useInProject}
           </h2>
           <div role="tablist" className="flex flex-wrap gap-1" dir="ltr">

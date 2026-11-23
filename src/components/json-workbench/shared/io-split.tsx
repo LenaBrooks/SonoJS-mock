@@ -10,7 +10,7 @@ type Props = {
   className?: string;
 };
 
-/** Two panes with a flow arrow pointing toward output (flips in RTL). */
+/** Two panes with a flow arrow pointing toward output (flips in ltr). */
 export function IoSplit({ input, output, className }: Props) {
   return (
     <div
@@ -25,7 +25,7 @@ export function IoSplit({ input, output, className }: Props) {
         aria-hidden
       >
         <div className="flex size-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground">
-          <ArrowRight className="size-4 rtl:rotate-180" />
+          <ArrowRight className="size-4 ltr:rotate-180" />
         </div>
       </div>
       <div className="min-w-0">{output}</div>

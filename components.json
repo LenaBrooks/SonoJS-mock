@@ -11,7 +11,7 @@
     "prefix": ""
   },
   "iconLibrary": "lucide",
-  "rtl": false,
+  "ltr": false,
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",

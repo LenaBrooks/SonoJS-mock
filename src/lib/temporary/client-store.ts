@@ -1,4 +1,4 @@
-const STORAGE_KEY = "mockdata-temporary-apis";
+const STORAGE_KEY = "sonojs-mock-temporary-apis";
 
 export type StoredTemporaryApi = {
   publicId: string;

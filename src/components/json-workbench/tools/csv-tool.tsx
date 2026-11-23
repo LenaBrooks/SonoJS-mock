@@ -16,14 +16,13 @@ import { useWorkbench } from "../workbench-context";
 type Mode = "json-to-csv" | "csv-to-json";
 
 const SAMPLE_CSV = `name,age
-Milad,32
-Ali,28
+Jordan Lee,32
+Taylor Brooks,28
 `;
 
 export function CsvTool() {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
   const { source, secondary, setSecondary, useAsSource } = useWorkbench();
   const outputId = useId();
   const altId = useId();
@@ -119,7 +118,6 @@ export function CsvTool() {
           role="status"
           className={cn(
             "rounded-md border border-[var(--response)]/35 bg-[var(--response)]/10 px-3 py-2.5 text-[13px] text-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {t.transform.csvApplied}

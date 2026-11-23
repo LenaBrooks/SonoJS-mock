@@ -5,7 +5,7 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = createPageMetadata({
   title: "Image Generator",
   description:
-    "Placeholder images via URL — SVG from MockData or real Picsum photos. Use directly in img, CSS, and projects.",
+    "Placeholder images via URL - SVG from SonoJS Mock or real Picsum photos. Use directly in img, CSS, and projects.",
   path: "/image-generator",
 });
 

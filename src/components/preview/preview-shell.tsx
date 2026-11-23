@@ -20,7 +20,6 @@ export function PreviewShell({
   children: ReactNode;
 }) {
   const { dict, locale } = useUiLocale();
-  const isFa = locale === "fa";
   const backLabel = dict.preview.backToResource.replace("{name}", title);
 
   return (
@@ -35,12 +34,12 @@ export function PreviewShell({
               className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               <ArrowLeft
-                className={cn("size-5 sm:size-6", isFa && "rotate-180")}
+                className={cn("size-5 sm:size-6")}
                 strokeWidth={1.75}
                 aria-hidden
               />
             </Link>
-            <span className={cn("truncate", isFa && "font-fa-label")}>{title}</span>
+            <span className={cn("truncate")}>{title}</span>
           </h1>
           <Eye
             className="size-6 shrink-0 text-muted-foreground sm:size-7"
@@ -51,7 +50,6 @@ export function PreviewShell({
         <p
           className={cn(
             "max-w-xl text-[14px] leading-6 text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {dict.preview.blurb}{" "}

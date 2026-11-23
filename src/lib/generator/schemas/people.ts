@@ -35,7 +35,6 @@ import {
 
 const ROLES = {
   en: ["admin", "member", "viewer", "editor"] as const,
-  fa: ["admin", "member", "viewer", "editor"] as const,
 };
 
 const SPECIALTIES = {
@@ -47,26 +46,16 @@ const SPECIALTIES = {
     "Neurology",
     "General Practice",
   ] as const,
-  fa: [
-    "قلب",
-    "پوست",
-    "اطفال",
-    "ارتوپدی",
-    "مغز و اعصاب",
-    "عمومی",
-  ] as const,
 };
 
 const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] as const;
 
 const VEHICLE_TYPES = {
   en: ["sedan", "suv", "van", "motorcycle", "truck"] as const,
-  fa: ["سواری", "شاسی‌بلند", "ون", "موتورسیکلت", "کامیونت"] as const,
 };
 
 const GUEST_STATUSES = {
   en: ["checked_in", "reserved", "checked_out", "cancelled"] as const,
-  fa: ["ورود کرده", "رزرو شده", "خروج کرده", "لغو شده"] as const,
 };
 
 const SUBJECTS = {
@@ -80,26 +69,14 @@ const SUBJECTS = {
     "Biology",
     "Art",
   ] as const,
-  fa: [
-    "ریاضی",
-    "فیزیک",
-    "شیمی",
-    "ادبیات",
-    "تاریخ",
-    "علوم کامپیوتر",
-    "زیست‌شناسی",
-    "هنر",
-  ] as const,
 };
 
 const GRADES = {
   en: ["9", "10", "11", "12"] as const,
-  fa: ["نهم", "دهم", "یازدهم", "دوازدهم"] as const,
 };
 
 const TEAM_ROLES = {
   en: ["lead", "member", "contributor", "intern"] as const,
-  fa: ["سرپرست", "عضو", "همکار", "کارآموز"] as const,
 };
 
 export const peopleTopics: GeneratorTopic[] = [
@@ -137,8 +114,8 @@ export const peopleTopics: GeneratorTopic[] = [
         company: pick(rng, ctx.pack.companies),
         location: `${loc.city}, ${loc.region}`,
         age: int(rng, 18, 65),
-        role: pick(rng, ROLES[ctx.uiLocale]),
-        bio: pick(rng, contentList("bios", ctx.uiLocale)),
+        role: pick(rng, ROLES["en"]),
+        bio: pick(rng, contentList("bios")),
         website: `https://example.com/u/${usernameFromName(name, rng)}`,
         createdAt: isoDate(rng, 400),
         country: ctx.pack.countryName,
@@ -177,8 +154,7 @@ export const peopleTopics: GeneratorTopic[] = [
         company: pick(rng, ctx.pack.companies),
         country: ctx.pack.countryName,
         ordersCount: int(rng, 0, 48),
-        totalSpent: moneyAmount(rng, ctx.uiLocale, {
-          fa: [0, 50_000_000],
+        totalSpent: moneyAmount(rng, "en", {
           en: [0, 5000],
         }),
         createdAt: isoDate(rng, 500),
@@ -211,8 +187,8 @@ export const peopleTopics: GeneratorTopic[] = [
       const record: Record<string, unknown> = {
         id: id("emp", ctx.index, rng),
         name,
-        jobTitle: pick(rng, contentList("jobTitles", ctx.uiLocale)),
-        department: pick(rng, contentList("departments", ctx.uiLocale)),
+        jobTitle: pick(rng, contentList("jobTitles")),
+        department: pick(rng, contentList("departments")),
         company: pick(rng, ctx.pack.companies),
         avatar: avatarUrl(`emp-${ctx.seed}-${ctx.index}`),
         location: `${loc.city}, ${loc.region}`,
@@ -220,8 +196,7 @@ export const peopleTopics: GeneratorTopic[] = [
         phone: phone(ctx.pack, rng),
         country: ctx.pack.countryName,
         hiredAt: isoDate(rng, 1200),
-        salary: moneyAmount(rng, ctx.uiLocale, {
-          fa: [8_000_000, 85_000_000],
+        salary: moneyAmount(rng, "en", {
           en: [42_000, 165_000],
         }),
       };
@@ -251,7 +226,7 @@ export const peopleTopics: GeneratorTopic[] = [
         id: id("aut", ctx.index, rng),
         name,
         avatar: avatarUrl(`aut-${ctx.seed}-${ctx.index}`),
-        bio: pick(rng, contentList("bios", ctx.uiLocale)),
+        bio: pick(rng, contentList("bios")),
         email: emailFromName(name, rng),
         website: `https://${usernameFromName(name, rng)}.dev`,
         location: `${loc.city}, ${ctx.pack.countryName}`,
@@ -282,16 +257,14 @@ export const peopleTopics: GeneratorTopic[] = [
       const name = fullName(ctx.pack, rng);
       const loc = place(ctx.pack, rng);
       const notes =
-        ctx.uiLocale === "fa"
-          ? ["پیگیری هفته بعد", "معرفی شده توسط همکار", "اولویت بالا", "تماسی نداشته"]
-          : ["Follow up next week", "Referred by teammate", "High priority", "No contact yet"];
+        ["Follow up next week", "Referred by teammate", "High priority", "No contact yet"];
       const record: Record<string, unknown> = {
         id: id("cnt", ctx.index, rng),
         name,
         email: emailFromName(name, rng),
         phone: phone(ctx.pack, rng),
         company: pick(rng, ctx.pack.companies),
-        jobTitle: pick(rng, contentList("jobTitles", ctx.uiLocale)),
+        jobTitle: pick(rng, contentList("jobTitles")),
         avatar: avatarUrl(`cnt-${ctx.seed}-${ctx.index}`),
         location: `${loc.city}, ${loc.region}`,
         notes: pick(rng, notes),
@@ -319,21 +292,17 @@ export const peopleTopics: GeneratorTopic[] = [
       const rng = createRng(ctx.seed, ctx.index);
       const name = fullName(ctx.pack, rng);
       const teams =
-        ctx.uiLocale === "fa"
-          ? ["محصول", "طراحی", "مهندسی", "رشد", "پشتیبانی"]
-          : ["Product", "Design", "Engineering", "Growth", "Support"];
+        ["Product", "Design", "Engineering", "Growth", "Support"];
       const skills =
-        ctx.uiLocale === "fa"
-          ? ["React", "TypeScript", "Figma", "SQL", "Node"]
-          : ["React", "TypeScript", "Figma", "SQL", "Node"];
+        ["React", "TypeScript", "Figma", "SQL", "Node"];
       const record: Record<string, unknown> = {
         id: id("tm", ctx.index, rng),
         name,
-        role: pick(rng, TEAM_ROLES[ctx.uiLocale]),
+        role: pick(rng, TEAM_ROLES["en"]),
         team: pick(rng, teams),
         avatar: avatarUrl(`tm-${ctx.seed}-${ctx.index}`),
         email: emailFromName(name, rng),
-        department: pick(rng, contentList("departments", ctx.uiLocale)),
+        department: pick(rng, contentList("departments")),
         joinedAt: isoDate(rng, 900),
         skills: [pick(rng, skills), pick(rng, skills)],
       };
@@ -361,13 +330,11 @@ export const peopleTopics: GeneratorTopic[] = [
       const name = fullName(ctx.pack, rng);
       const loc = place(ctx.pack, rng);
       const hospitals =
-        ctx.uiLocale === "fa"
-          ? ["بیمارستان سینا", "مرکز طبی آریا", "کلینیک نور", "بیمارستان پارس"]
-          : ["City General", "Riverside Clinic", "North Medical", "Harbor Hospital"];
+        ["City General", "Riverside Clinic", "North Medical", "Harbor Hospital"];
       const record: Record<string, unknown> = {
         id: id("doc", ctx.index, rng),
         name,
-        specialty: pick(rng, SPECIALTIES[ctx.uiLocale]),
+        specialty: pick(rng, SPECIALTIES["en"]),
         hospital: pick(rng, hospitals),
         avatar: avatarUrl(`doc-${ctx.seed}-${ctx.index}`),
         email: emailFromName(name, rng),
@@ -401,9 +368,7 @@ export const peopleTopics: GeneratorTopic[] = [
       const name = fullName(ctx.pack, rng);
       const loc = place(ctx.pack, rng);
       const diagnoses =
-        ctx.uiLocale === "fa"
-          ? ["فشار خون", "دیابت نوع ۲", "میگرن", "آسم", "کم‌خونی"]
-          : ["Hypertension", "Type 2 diabetes", "Migraine", "Asthma", "Anemia"];
+        ["Hypertension", "Type 2 diabetes", "Migraine", "Asthma", "Anemia"];
       const record: Record<string, unknown> = {
         id: id("pat", ctx.index, rng),
         name,
@@ -441,15 +406,12 @@ export const peopleTopics: GeneratorTopic[] = [
       const rng = createRng(ctx.seed, ctx.index);
       const name = fullName(ctx.pack, rng);
       const loc = place(ctx.pack, rng);
-      const faLetters = ["ب", "ج", "د", "س", "ص", "ط", "ق", "ل", "م", "ن", "و", "ه", "ی"] as const;
       const plate =
-        ctx.uiLocale === "fa"
-          ? `${int(rng, 11, 99)}${pick(rng, faLetters)}${int(rng, 100, 999)}-${int(rng, 10, 99)}`
-          : `${String.fromCharCode(65 + int(rng, 0, 25))}${String.fromCharCode(65 + int(rng, 0, 25))}-${int(rng, 1000, 9999)}`;
+        `${String.fromCharCode(65 + int(rng, 0, 25))}${String.fromCharCode(65 + int(rng, 0, 25))}-${int(rng, 1000, 9999)}`;
       const record: Record<string, unknown> = {
         id: id("drv", ctx.index, rng),
         name,
-        vehicleType: pick(rng, VEHICLE_TYPES[ctx.uiLocale]),
+        vehicleType: pick(rng, VEHICLE_TYPES["en"]),
         plateNumber: plate,
         rating: Number((3.5 + rng() * 1.5).toFixed(1)),
         phone: phone(ctx.pack, rng),
@@ -487,7 +449,7 @@ export const peopleTopics: GeneratorTopic[] = [
         name,
         email: emailFromName(name, rng),
         roomNumber: String(int(rng, 101, 899)),
-        status: pick(rng, GUEST_STATUSES[ctx.uiLocale]),
+        status: pick(rng, GUEST_STATUSES["en"]),
         phone: phone(ctx.pack, rng),
         checkIn: isoDate(rng, 60),
         checkOut: isoDate(rng, 30),
@@ -525,7 +487,7 @@ export const peopleTopics: GeneratorTopic[] = [
         name,
         username,
         avatar: avatarUrl(`prf-${ctx.seed}-${ctx.index}`),
-        bio: pick(rng, contentList("bios", ctx.uiLocale)),
+        bio: pick(rng, contentList("bios")),
         email: emailFromName(name, rng),
         followers: int(rng, 0, 120_000),
         following: int(rng, 10, 2500),
@@ -555,19 +517,15 @@ export const peopleTopics: GeneratorTopic[] = [
     ],
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
-      const name = fullNameByGender(ctx.pack, rng, ctx.uiLocale, "female");
+      const name = fullNameByGender(ctx.pack, rng, "en", "female");
       const schools =
-        ctx.uiLocale === "fa"
-          ? ["دبیرستان فرزانگان", "هنرستان الزهرا", "مدرسه روشن", "لیسه دانش"]
-          : ["Lincoln High", "Riverside Academy", "Oakwood School", "North High"];
+        ["Lincoln High", "Riverside Academy", "Oakwood School", "North High"];
       const majors =
-        ctx.uiLocale === "fa"
-          ? ["ریاضی", "تجربی", "انسانی", "هنر"]
-          : ["STEM", "Science", "Humanities", "Arts"];
+        ["STEM", "Science", "Humanities", "Arts"];
       const record: Record<string, unknown> = {
         id: id("gs", ctx.index, rng),
         name,
-        grade: pick(rng, GRADES[ctx.uiLocale]),
+        grade: pick(rng, GRADES["en"]),
         school: pick(rng, schools),
         avatar: avatarUrl(`gs-${ctx.seed}-${ctx.index}`),
         age: int(rng, 14, 18),
@@ -597,19 +555,15 @@ export const peopleTopics: GeneratorTopic[] = [
     ],
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
-      const name = fullNameByGender(ctx.pack, rng, ctx.uiLocale, "male");
+      const name = fullNameByGender(ctx.pack, rng, "en", "male");
       const schools =
-        ctx.uiLocale === "fa"
-          ? ["دبیرستان علامه", "هنرستان شهید بهشتی", "مدرسه آفاق", "لیسه پویا"]
-          : ["Jefferson High", "Westfield Academy", "Summit School", "Central High"];
+        ["Jefferson High", "Westfield Academy", "Summit School", "Central High"];
       const majors =
-        ctx.uiLocale === "fa"
-          ? ["ریاضی", "تجربی", "انسانی", "فنی"]
-          : ["STEM", "Science", "Humanities", "Vocational"];
+        ["STEM", "Science", "Humanities", "Vocational"];
       const record: Record<string, unknown> = {
         id: id("bs", ctx.index, rng),
         name,
-        grade: pick(rng, GRADES[ctx.uiLocale]),
+        grade: pick(rng, GRADES["en"]),
         school: pick(rng, schools),
         avatar: avatarUrl(`bs-${ctx.seed}-${ctx.index}`),
         age: int(rng, 14, 18),
@@ -641,17 +595,13 @@ export const peopleTopics: GeneratorTopic[] = [
       const rng = createRng(ctx.seed, ctx.index);
       const name = fullName(ctx.pack, rng);
       const schools =
-        ctx.uiLocale === "fa"
-          ? ["دبیرستان نمونه", "مدرسه هوشمند", "لیسه ملی", "آموزشگاه پارس"]
-          : ["Lincoln High", "Riverside Academy", "Oakwood School", "North High"];
+        ["Lincoln High", "Riverside Academy", "Oakwood School", "North High"];
       const departments =
-        ctx.uiLocale === "fa"
-          ? ["علوم", "ریاضی", "زبان", "علوم انسانی"]
-          : ["Science", "Math", "Languages", "Humanities"];
+        ["Science", "Math", "Languages", "Humanities"];
       const record: Record<string, unknown> = {
         id: id("tch", ctx.index, rng),
         name,
-        subject: pick(rng, SUBJECTS[ctx.uiLocale]),
+        subject: pick(rng, SUBJECTS["en"]),
         school: pick(rng, schools),
         avatar: avatarUrl(`tch-${ctx.seed}-${ctx.index}`),
         email: emailFromName(name, rng),

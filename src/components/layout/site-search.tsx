@@ -25,7 +25,6 @@ type SiteSearchProps = {
 export function SiteSearch({ large = false, autofocus = false }: SiteSearchProps) {
   const router = useRouter();
   const { locale, dict } = useUiLocale();
-  const isFa = locale === "fa";
   const inputId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState("");
@@ -100,13 +99,12 @@ export function SiteSearch({ large = false, autofocus = false }: SiteSearchProps
               large ? dict.home.searchPlaceholder : dict.common.searchPlaceholder
             }
             className={cn(
-              "w-full border border-border bg-card text-foreground outline-none transition-[border-color,box-shadow] placeholder:text-muted-foreground/60 focus:border-[var(--request)]/60 focus:ring-2 focus:ring-[var(--request)]/20",
+              "field-focus w-full border border-border bg-card text-foreground placeholder:text-muted-foreground/60",
               large
                 ? "h-12 rounded-lg pe-4 ps-10 text-[15px]"
                 : "h-9 rounded-md pe-3 ps-9 text-[13px]",
-              isFa && "font-fa-label",
             )}
-            dir={isFa ? "rtl" : "ltr"}
+            dir={"ltr"}
           />
         </div>
       </form>
@@ -120,17 +118,16 @@ export function SiteSearch({ large = false, autofocus = false }: SiteSearchProps
             <p
               className={cn(
                 "px-3 py-3.5 text-[13px] text-muted-foreground",
-                isFa && "font-fa-label",
               )}
             >
               {dict.common.noResults}
             </p>
           ) : (
             <ul className="max-h-80 overflow-auto py-1">
-              {results.map(({ resource, matches }) => {
+              {results.map(({ resource, matches }, resultIndex) => {
                 const cat = dict.catalog[resource.id];
                 return (
-                  <li key={resource.id}>
+                  <li key={`${resource.id}-${resource.href}-${resultIndex}`}>
                     <Link
                       href={resource.href}
                       className="block px-3 py-2 hover:bg-[var(--surface-hover)]"
@@ -140,7 +137,6 @@ export function SiteSearch({ large = false, autofocus = false }: SiteSearchProps
                         <span
                           className={cn(
                             "text-[13px] font-semibold",
-                            isFa && "font-fa-label",
                           )}
                         >
                           {cat?.title ?? resource.title}
@@ -156,16 +152,15 @@ export function SiteSearch({ large = false, autofocus = false }: SiteSearchProps
                         <p
                           className={cn(
                             "mt-0.5 line-clamp-1 text-[11px] text-muted-foreground",
-                            isFa && "font-fa-label",
                           )}
                         >
                           {cat.summary}
                         </p>
                       ) : null}
                     </Link>
-                    {matches.slice(0, 3).map((endpoint) => (
+                    {matches.slice(0, 3).map((endpoint, endpointIndex) => (
                       <Link
-                        key={`${resource.id}-${endpoint.path}`}
+                        key={`${resource.id}-${endpoint.path}-${endpointIndex}`}
                         href={resource.href}
                         className="flex items-center gap-2 px-3 py-1.5 hover:bg-[var(--surface-hover)]"
                         onClick={() => setOpen(false)}

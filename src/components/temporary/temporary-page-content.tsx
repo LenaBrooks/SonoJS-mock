@@ -33,13 +33,11 @@ import {
   type ValidateIssue,
   type ValidateIssueCode,
 } from "@/lib/temporary/validate-json";
-import { en } from "@/lib/i18n/messages/en";
-import { fa } from "@/lib/i18n/messages/fa";
+import { en } from "@/lib/messages/en";
 import { cn } from "@/lib/utils";
 
 const SAMPLE_JSON = {
   en: en.temporary.sampleJson,
-  fa: fa.temporary.sampleJson,
 } as const;
 
 type JsonStatus = "idle" | "ok" | "error" | "fix";
@@ -47,10 +45,9 @@ type JsonStatus = "idle" | "ok" | "error" | "fix";
 export function TemporaryPageContent() {
   const { dict, locale } = useUiLocale();
   const t = dict.temporary;
-  const isFa = locale === "fa";
 
   const [json, setJson] = useState(
-    () => SAMPLE_JSON[locale === "fa" ? "fa" : "en"],
+    () => SAMPLE_JSON[false ? "en" : "en"],
   );
   const [duration, setDuration] = useState<TemporaryDuration>("12h");
   const [fixedText, setFixedText] = useState<string | null>(null);
@@ -72,9 +69,9 @@ export function TemporaryPageContent() {
   );
 
   useEffect(() => {
-    const next = SAMPLE_JSON[locale === "fa" ? "fa" : "en"];
+    const next = SAMPLE_JSON[false ? "en" : "en"];
     setJson((current) => {
-      if (current === SAMPLE_JSON.en || current === SAMPLE_JSON.fa) {
+      if (current === SAMPLE_JSON.en || current === SAMPLE_JSON.en) {
         return next;
       }
       return current;
@@ -338,13 +335,12 @@ export function TemporaryPageContent() {
   return (
     <div
       className="mx-auto max-w-2xl px-4 pt-10 pb-[max(7rem,calc(5rem+env(safe-area-inset-bottom,0px)))] sm:px-6 sm:pt-14"
-      dir={isFa ? "rtl" : undefined}
+      dir={"ltr"}
     >
       <header className="mb-8 space-y-3">
         <h1
           className={cn(
             "inline-flex min-w-0 items-center gap-2.5 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl",
-            isFa && "font-fa-label",
           )}
         >
           <Link
@@ -354,7 +350,7 @@ export function TemporaryPageContent() {
             className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <ArrowLeft
-              className={cn("size-5 sm:size-6", isFa && "rotate-180")}
+              className={cn("size-5 sm:size-6")}
               strokeWidth={1.75}
               aria-hidden
             />
@@ -366,7 +362,6 @@ export function TemporaryPageContent() {
         <p
           className={cn(
             "max-w-xl text-[15px] leading-7 text-foreground/80",
-            isFa && "font-fa-label",
           )}
         >
           {t.blurb}
@@ -374,7 +369,6 @@ export function TemporaryPageContent() {
         <p
           className={cn(
             "max-w-xl whitespace-pre-line text-[14px] leading-6 text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {t.privacyNote}
@@ -398,7 +392,6 @@ export function TemporaryPageContent() {
             <p
               className={cn(
                 "text-[14px] font-medium text-[var(--response)]",
-                isFa && "font-fa-label",
               )}
             >
               {t.createdTitle}
@@ -432,7 +425,6 @@ export function TemporaryPageContent() {
             htmlFor="tmp-json"
             className={cn(
               "text-[13px] text-muted-foreground",
-              isFa && "font-fa-label",
             )}
           >
             {t.jsonLabel}
@@ -454,7 +446,6 @@ export function TemporaryPageContent() {
                 value={json}
                 bare
                 padEnd
-                persianStrings={isFa}
                 onChange={(next) => {
                   setJson(next);
                   resetJsonFeedback();
@@ -498,7 +489,6 @@ export function TemporaryPageContent() {
                 className={cn(
                   "flex items-start gap-2 border-t px-3 py-2 text-[12px] leading-5",
                   statusTone,
-                  isFa && "font-fa-label",
                 )}
                 role="status"
               >
@@ -523,7 +513,6 @@ export function TemporaryPageContent() {
             <p
               className={cn(
                 "text-[13px] text-muted-foreground",
-                isFa && "font-fa-label",
               )}
             >
               {t.fixedPreview}
@@ -544,7 +533,6 @@ export function TemporaryPageContent() {
                 }}
                 className={cn(
                   "h-9 flex-1 rounded-md bg-[var(--request-fill)] text-[13px] font-medium text-white disabled:opacity-40",
-                  isFa && "font-fa-label",
                 )}
               >
                 {creating ? t.creating : t.acceptFix}
@@ -554,7 +542,6 @@ export function TemporaryPageContent() {
                 onClick={resetJsonFeedback}
                 className={cn(
                   "h-9 rounded-md border border-border px-3 text-[13px]",
-                  isFa && "font-fa-label",
                 )}
               >
                 {t.rejectFix}
@@ -568,7 +555,6 @@ export function TemporaryPageContent() {
             htmlFor="tmp-duration"
             className={cn(
               "text-[13px] text-muted-foreground",
-              isFa && "font-fa-label",
             )}
           >
             {t.durationLabel}
@@ -582,8 +568,7 @@ export function TemporaryPageContent() {
                   setDuration(e.target.value as TemporaryDuration)
                 }
                 className={cn(
-                  "h-10 w-full appearance-none rounded-lg border border-border bg-white pe-9 ps-3 text-[14px] outline-none transition-colors focus:border-foreground/35 dark:bg-background",
-                  isFa && "font-fa-label",
+                  "field-focus h-10 w-full appearance-none rounded-lg border border-border bg-white pe-9 ps-3 text-[14px] dark:bg-background",
                 )}
               >
                 {TEMPORARY_DURATIONS.map((d) => (
@@ -605,7 +590,6 @@ export function TemporaryPageContent() {
                 onClick={() => void onCreate()}
                 className={cn(
                   "h-10 min-w-0 flex-1 rounded-md bg-[var(--request-fill)] text-[14px] font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40",
-                  isFa && "font-fa-label",
                 )}
               >
                 {creating ? t.creating : t.create}
@@ -628,7 +612,6 @@ export function TemporaryPageContent() {
               <p
                 className={cn(
                   "text-[13px] font-medium text-foreground",
-                  isFa && "font-fa-label",
                 )}
               >
                 {t.limitReached}
@@ -636,7 +619,6 @@ export function TemporaryPageContent() {
               <p
                 className={cn(
                   "text-[13px] leading-5 text-muted-foreground",
-                  isFa && "font-fa-label",
                 )}
               >
                 {t.limitReachedBody}
@@ -649,7 +631,6 @@ export function TemporaryPageContent() {
           <p
             className={cn(
               "text-[13px] text-[var(--delete)]",
-              isFa && "font-fa-label",
             )}
           >
             {error}
@@ -662,7 +643,6 @@ export function TemporaryPageContent() {
           <h2
             className={cn(
               "text-[15px] font-semibold tracking-tight",
-              isFa && "font-fa-label",
             )}
           >
             {t.myApis}
@@ -675,7 +655,6 @@ export function TemporaryPageContent() {
                 disabled={deletingAll}
                 className={cn(
                   "text-[12px] text-[var(--delete)] transition-opacity hover:opacity-80 disabled:opacity-50",
-                  isFa && "font-fa-label",
                 )}
               >
                 {t.deleteAll}
@@ -684,14 +663,11 @@ export function TemporaryPageContent() {
             <span
               className={cn(
                 "text-[12px] tabular-nums text-muted-foreground",
-                isFa && "font-fa-label",
               )}
             >
               {t.slotsLabel.replace(
                 "{n}",
-                isFa
-                  ? activeCount.toLocaleString("fa-IR")
-                  : String(activeCount),
+                activeCount.toLocaleString("en-US"),
               )}
             </span>
           </div>
@@ -701,26 +677,21 @@ export function TemporaryPageContent() {
           <p
             className={cn(
               "rounded-lg border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground",
-              isFa && "font-fa-label",
             )}
           >
             {t.emptyList}
           </p>
         ) : (
-          <ul className="overflow-hidden rounded-lg border border-border">
-            {list.map((item, index) => {
-              const remaining = formatExpiresIn(
-                item.expiresAt,
-                isFa ? "fa" : "en",
-              );
+          <ul className="flex flex-col gap-2">
+            {list.map((item) => {
+              const remaining = formatExpiresIn(item.expiresAt);
               const isNew = highlightId === item.publicId;
               return (
                 <li
                   key={item.publicId}
                   className={cn(
-                    "px-3 py-2.5 transition-colors",
-                    index > 0 && "border-t border-border",
-                    isNew && "bg-[var(--request)]/8",
+                    "rounded-lg border border-border bg-white px-3 py-2.5 shadow-xs transition-colors dark:bg-card",
+                    isNew && "border-foreground/15",
                   )}
                 >
                   <div className="flex items-center gap-1.5" dir="ltr">
@@ -754,10 +725,9 @@ export function TemporaryPageContent() {
                       remaining.expired
                         ? "text-[var(--delete)]"
                         : "text-muted-foreground",
-                      isFa && "font-fa-label",
                     )}
                   >
-                    <span className="sm:hidden">{remaining.shortLabel}</span>
+                    <span className="sm:hidden">{remaining.sholtrabel}</span>
                     <span className="hidden sm:inline">{remaining.label}</span>
                   </p>
                 </li>
@@ -779,13 +749,12 @@ export function TemporaryPageContent() {
             aria-labelledby="tmp-delete-title"
             className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
-            dir={isFa ? "rtl" : undefined}
+            dir={"ltr"}
           >
             <h3
               id="tmp-delete-title"
               className={cn(
                 "text-[16px] font-semibold",
-                isFa && "font-fa-label",
               )}
             >
               {t.confirmDelete}
@@ -793,7 +762,6 @@ export function TemporaryPageContent() {
             <p
               className={cn(
                 "mt-1.5 text-[13px] leading-5 text-muted-foreground",
-                isFa && "font-fa-label",
               )}
             >
               {t.confirmDeleteBody}
@@ -804,7 +772,6 @@ export function TemporaryPageContent() {
                 onClick={() => setDeleteTarget(null)}
                 className={cn(
                   "h-9 rounded-md border border-border px-3 text-[13px]",
-                  isFa && "font-fa-label",
                 )}
               >
                 {t.cancel}
@@ -815,7 +782,6 @@ export function TemporaryPageContent() {
                 onClick={() => void confirmDelete()}
                 className={cn(
                   "h-9 rounded-md bg-[var(--delete)] px-3 text-[13px] font-medium text-white disabled:opacity-50",
-                  isFa && "font-fa-label",
                 )}
               >
                 {deletingId === deleteTarget.publicId
@@ -839,13 +805,12 @@ export function TemporaryPageContent() {
             aria-labelledby="tmp-delete-all-title"
             className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
-            dir={isFa ? "rtl" : undefined}
+            dir={"ltr"}
           >
             <h3
               id="tmp-delete-all-title"
               className={cn(
                 "text-[16px] font-semibold",
-                isFa && "font-fa-label",
               )}
             >
               {t.confirmDeleteAll}
@@ -853,7 +818,6 @@ export function TemporaryPageContent() {
             <p
               className={cn(
                 "mt-1.5 text-[13px] leading-5 text-muted-foreground",
-                isFa && "font-fa-label",
               )}
             >
               {t.confirmDeleteAllBody}
@@ -865,7 +829,6 @@ export function TemporaryPageContent() {
                 onClick={() => setDeleteAllOpen(false)}
                 className={cn(
                   "h-9 rounded-md border border-border px-3 text-[13px] disabled:opacity-50",
-                  isFa && "font-fa-label",
                 )}
               >
                 {t.cancel}
@@ -876,7 +839,6 @@ export function TemporaryPageContent() {
                 onClick={() => void confirmDeleteAll()}
                 className={cn(
                   "h-9 rounded-md bg-[var(--delete)] px-3 text-[13px] font-medium text-white disabled:opacity-50",
-                  isFa && "font-fa-label",
                 )}
               >
                 {deletingAll ? t.deleting : t.deleteAll}

@@ -15,14 +15,24 @@ export type ApiResource = {
 function crudEndpoints(base: string, extras: ApiResource["endpoints"] = []) {
   return [
     {
-      methods: "GET / POST",
+      methods: "GET",
       path: base,
-      note: "List or create",
+      note: "List (paginated) — always allowed",
     },
     {
-      methods: "GET / PATCH / DELETE",
+      methods: "POST",
+      path: base,
+      note: "Create — 403 READ_ONLY in production; set CATALOG_WRITABLE=true locally",
+    },
+    {
+      methods: "GET",
       path: `${base}/:id`,
-      note: "Read, update, or delete one",
+      note: "Read one",
+    },
+    {
+      methods: "PATCH / DELETE",
+      path: `${base}/:id`,
+      note: "Update or delete — 403 READ_ONLY in production",
     },
     ...extras,
   ];
@@ -225,7 +235,7 @@ export const apiResources: ApiResource[] = [
       },
       {
         methods: "GET",
-        path: "/api/countries?code=IR",
+        path: "/api/countries?code=GB",
         note: "Lookup by ISO code",
       },
     ]),
@@ -242,14 +252,13 @@ export const plannedResources: {
   summary: string;
 }[] = [];
 
-/** Normalize Latin + Persian for search (ye/kaf variants, ZWNJ). */
+/** Normalize query text for search. */
 function normalizeSearch(value: string) {
   return value
     .trim()
     .toLowerCase()
-    .replace(/ي/g, "ی")
-    .replace(/ك/g, "ک")
-    .replace(/\u200c/g, "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, " ");
 }
 
@@ -302,5 +311,10 @@ export function searchResources(
       }
       return null;
     })
-    .filter((item): item is NonNullable<typeof item> => item !== null);
+    .filter((item): item is NonNullable<typeof item> => item !== null)
+    .filter(
+      (item, index, items) =>
+        items.findIndex((candidate) => candidate.resource.id === item.resource.id) ===
+        index,
+    );
 }

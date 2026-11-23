@@ -4,7 +4,7 @@ type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-/** Old path — keep bookmarks and shared links working. */
+/** Old path - keep bookmarks and shared links working. */
 export default async function JsonWorkbenchRedirect({ searchParams }: Props) {
   const params = await searchParams;
   const qs = new URLSearchParams();

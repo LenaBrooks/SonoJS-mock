@@ -77,7 +77,7 @@ export const seedComments: SeedComment[] = [
     postIndex: 14,
     name: "Harper Singh",
     email: "harper.s@example.com",
-    body: "One error shape keeps client code boring — in a good way.",
+    body: "One error shape keeps client code boring - in a good way.",
   },
   {
     postIndex: 15,
@@ -113,7 +113,7 @@ export const seedComments: SeedComment[] = [
     postIndex: 23,
     name: "Nina Volkov",
     email: "nina.v@example.com",
-    body: "Welcome post — first GET always works. Love it.",
+    body: "Welcome post - first GET always works. Love it.",
   },
   {
     postIndex: 3,
@@ -143,7 +143,7 @@ export const seedComments: SeedComment[] = [
     postIndex: 18,
     name: "Launch Buddy",
     email: "launch.buddy@example.com",
-    body: "Checklist comment — domain still pending on our side.",
+    body: "Checklist comment - domain still pending on our side.",
   },
   {
     postIndex: 20,

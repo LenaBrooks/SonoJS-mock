@@ -11,7 +11,7 @@ type Props = {
   onChange: (value: string) => void;
   rows?: number;
   className?: string;
-  /** Copy (or other) control — rendered top-end inside the dark code frame. */
+  /** Copy (or other) control - rendered top-end inside the dark code frame. */
   headerAction?: ReactNode;
   placeholder?: string;
   tone?: "input" | "output" | "neutral";
@@ -67,7 +67,7 @@ export function TextPane({
           dir="ltr"
           className={cn(
             "code-pane code-scroll w-full resize-y rounded-md border border-border bg-[var(--vscode-bg)] p-3 font-mono text-[12px] leading-5 text-[var(--vscode-fg)] outline-none",
-            "focus-visible:border-[var(--request)]/50 focus-visible:ring-2 focus-visible:ring-[var(--request)]/30",
+            "field-focus",
             headerAction && "pe-11",
             frame,
           )}

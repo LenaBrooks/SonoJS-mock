@@ -25,11 +25,6 @@ export function ResponseViewer({ prettyJson }: ResponseViewerProps) {
       className="code-pane ltr-tech min-w-0 overflow-hidden rounded-lg border border-[var(--response)]/35 bg-[var(--vscode-bg)] shadow-[0_12px_40px_-20px_rgb(0_0_0_/_0.8)]"
     >
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--vscode-border)] bg-[var(--vscode-bg-elevated)] px-3 py-2">
-        <div className="flex items-center gap-1.5" aria-hidden>
-          <span className="size-2.5 rounded-full bg-[#ff5f56]" />
-          <span className="size-2.5 rounded-full bg-[#ffbd2e]" />
-          <span className="size-2.5 rounded-full bg-[#27c93f]" />
-        </div>
         <span className="font-mono text-[11px] font-semibold text-[var(--response-fg)]">
           Response
         </span>

@@ -38,7 +38,7 @@ type Props = {
   allowApply?: boolean;
 };
 
-/** Result-only tool panel — reads the shared workbench JSON. */
+/** Result-only tool panel - reads the shared workbench JSON. */
 export function SimpleJsonTool({
   idleTitle,
   idleBody,

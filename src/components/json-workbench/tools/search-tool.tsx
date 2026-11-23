@@ -22,7 +22,7 @@ export function SearchTool() {
   const replaceId = useId();
   const last = useRef("");
 
-  const [query, setQuery] = useState("Tehran");
+  const [query, setQuery] = useState("London");
   const [replacement, setReplacement] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [matches, setMatches] = useState<SearchMatch[] | null>(null);
@@ -101,7 +101,7 @@ export function SearchTool() {
             onKeyDown={(e) => {
               if (e.key === "Enter") runSearch();
             }}
-            className="h-9 w-full rounded-md border border-border bg-background px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+            className="h-9 w-full rounded-md border border-border bg-background px-2.5 text-[13px] field-focus"
             dir="auto"
           />
         </label>
@@ -113,7 +113,7 @@ export function SearchTool() {
             id={replaceId}
             value={replacement}
             onChange={(e) => setReplacement(e.target.value)}
-            className="h-9 w-full rounded-md border border-border bg-background px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+            className="h-9 w-full rounded-md border border-border bg-background px-2.5 text-[13px] field-focus"
             dir="auto"
           />
         </label>

@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = createPageMetadata({
   title: "API Playground",
   description:
-    "Send live requests to MockData APIs in the browser. Per-resource request state survives SPA navigation.",
+    "Send live requests to SonoJS Mock APIs in the browser. Per-resource request state survives SPA navigation.",
   path: "/playground",
 });
 

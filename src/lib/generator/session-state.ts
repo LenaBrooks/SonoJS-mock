@@ -25,7 +25,7 @@ const DEFAULT_STATE: GeneratorSessionState = {
   error: null,
 };
 
-/** In-memory session — survives client navigations, clears on full reload. */
+/** In-memory session â€” survives client navigations, clears on full reload. */
 let session: GeneratorSessionState = { ...DEFAULT_STATE };
 
 export function loadGeneratorSession(): GeneratorSessionState {

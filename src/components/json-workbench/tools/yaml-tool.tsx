@@ -14,7 +14,7 @@ import { useWorkbench } from "../workbench-context";
 
 type Mode = "json-to-yaml" | "yaml-to-json";
 
-const SAMPLE_YAML = `name: MockData
+const SAMPLE_YAML = `name: SonoJS Mock
 active: true
 count: 3
 `;
@@ -22,7 +22,6 @@ count: 3
 export function YamlTool() {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
   const { source, secondary, setSecondary, useAsSource } = useWorkbench();
   const outputId = useId();
   const altId = useId();
@@ -113,7 +112,6 @@ export function YamlTool() {
           role="status"
           className={cn(
             "rounded-md border border-[var(--response)]/35 bg-[var(--response)]/10 px-3 py-2.5 text-[13px] text-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {t.transform.yamlApplied}

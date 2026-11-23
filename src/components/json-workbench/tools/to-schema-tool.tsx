@@ -29,7 +29,6 @@ const SAMPLE_SCHEMA = `{
 export function ToSchemaTool() {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
   const { source, parsed, secondary, setSecondary } = useWorkbench();
   const outputId = useId();
   const schemaId = useId();
@@ -99,7 +98,6 @@ export function ToSchemaTool() {
       <p
         className={cn(
           "text-[13px] leading-relaxed text-muted-foreground",
-          isFa && "font-fa-label",
         )}
       >
         {mode === "json-to-schema"

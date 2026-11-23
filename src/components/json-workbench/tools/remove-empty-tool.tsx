@@ -19,7 +19,6 @@ type OptKey = keyof RemoveEmptyOptions;
 export function RemoveEmptyTool() {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
   const { source, parsed } = useWorkbench();
   const outputId = useId();
 
@@ -77,7 +76,6 @@ export function RemoveEmptyTool() {
                   checked={on}
                   onClick={() => toggle(key)}
                   title={label}
-                  className={cn(isFa && "font-fa-label")}
                 >
                   <code
                     className={cn(
@@ -104,7 +102,6 @@ export function RemoveEmptyTool() {
         <p
           className={cn(
             "text-[12px] text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {t.utilities.removePreserveHint}

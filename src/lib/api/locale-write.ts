@@ -1,16 +1,10 @@
 import {
-  captureFaCreate,
-  clearFaRuntimeOverlay,
-  partitionFaWrite,
-} from "@/lib/api/fa/runtime";
-import {
   resolveApiLocale,
   type LocaleResource,
 } from "@/lib/api/locale";
 
 /**
- * Apply PATCH body with ?lang=fa awareness: Persian text fields go to
- * runtime FA overlay; other fields update the English DB.
+ * API data is English-only; writes are persisted directly to the database.
  */
 export async function applyLocalizedPatch<
   TId extends string | number,
@@ -24,19 +18,7 @@ export async function applyLocalizedPatch<
   update: (id: TId, data: TPatch) => Promise<T | null>,
   getById: (id: TId) => Promise<T | null>,
 ): Promise<T | null> {
-  const locale = resolveApiLocale(request);
-  const dbPatch = partitionFaWrite(
-    resource,
-    locale,
-    id,
-    body as Record<string, unknown>,
-  ) as TPatch;
-
-  if (Object.keys(dbPatch as object).length === 0) {
-    return getById(id);
-  }
-
-  return update(id, dbPatch);
+  return update(id, body);
 }
 
 export function applyLocalizedCreate(
@@ -45,13 +27,16 @@ export function applyLocalizedCreate(
   id: string | number,
   body: Record<string, unknown>,
 ) {
-  const locale = resolveApiLocale(request);
-  captureFaCreate(resource, locale, id, body);
+  void request;
+  void resource;
+  void id;
+  void body;
 }
 
 export function applyLocalizedDelete(
   resource: LocaleResource,
   id: string | number,
 ) {
-  clearFaRuntimeOverlay(resource, id);
+  void resource;
+  void id;
 }

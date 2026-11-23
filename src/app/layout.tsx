@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, JetBrains_Mono, Vazirmatn } from "next/font/google";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteHeader } from "@/components/layout/site-header";
 import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { UiLocaleProvider } from "@/components/providers/ui-locale-provider";
-import { getServerUiLocale } from "@/lib/i18n/server";
+import { getServerUiLocale } from "@/lib/locale/server";
 import {
   DEFAULT_DESCRIPTION,
   SITE_NAME,
@@ -15,30 +16,13 @@ import {
 } from "@/lib/seo";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({
-  variable: "--font-plex-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const vazirmatn = Vazirmatn({
-  variable: "--font-vazirmatn",
-  subsets: ["arabic", "latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
+const geistSans = GeistSans;
+const geistMono = GeistMono;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    default: `${SITE_NAME} - ${SITE_TAGLINE}`,
     template: `%s · ${SITE_NAME}`,
   },
   description: DEFAULT_DESCRIPTION,
@@ -47,13 +31,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    title: `${SITE_NAME} - ${SITE_TAGLINE}`,
     description: DEFAULT_DESCRIPTION,
     url: SITE_URL,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    title: `${SITE_NAME} - ${SITE_TAGLINE}`,
     description: DEFAULT_DESCRIPTION,
   },
   robots: {
@@ -64,7 +48,7 @@ export const metadata: Metadata = {
 
 const themeInitScript = `(() => {
   try {
-    const key = 'mockdata-theme';
+    const key = 'sonojs-mock-theme';
     const stored = localStorage.getItem(key);
     const theme = stored === 'light' || stored === 'dark'
       ? stored
@@ -77,13 +61,9 @@ const themeInitScript = `(() => {
 
 const localeInitScript = `(() => {
   try {
-    const key = 'mockdata-ui-locale';
-    const stored = localStorage.getItem(key);
-    const locale = stored === 'fa' ? 'fa' : 'en';
     const root = document.documentElement;
-    root.lang = locale === 'fa' ? 'fa' : 'en';
-    root.dir = locale === 'fa' || locale === 'ar' ? 'rtl' : 'ltr';
-    root.classList.toggle('font-fa', locale === 'fa' || locale === 'ar');
+    root.lang = 'en';
+    root.dir = 'ltr';
   } catch (_) {}
 })();`;
 
@@ -96,22 +76,23 @@ export default async function RootLayout({
 
   return (
     <html
-      lang={initialLocale === "fa" ? "fa" : "en"}
-      dir={initialLocale === "fa" || initialLocale === "ar" ? "rtl" : "ltr"}
-      className={`${plexSans.variable} ${jetbrains.variable} ${vazirmatn.variable} h-full${initialLocale === "fa" || initialLocale === "ar" ? " font-fa" : ""}`}
+      lang="en"
+      dir="ltr"
+      data-scroll-behavior="smooth"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: localeInitScript }} />
       </head>
-      <body className="flex min-h-full flex-col">
+      <body className="style-vega flex min-h-full flex-col font-sans text-body">
         <UiLocaleProvider initialLocale={initialLocale}>
           <ThemeProvider>
             <NavigationProgress />
             <SiteHeader />
-        <main className="flex-1 pb-0">{children}</main>
-        <MobileBottomNav />
+            <main className="flex-1 pb-0">{children}</main>
+            <MobileBottomNav />
           </ThemeProvider>
         </UiLocaleProvider>
         <Analytics />

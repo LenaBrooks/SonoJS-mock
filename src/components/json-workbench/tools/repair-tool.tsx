@@ -18,7 +18,6 @@ import { useWorkbench } from "../workbench-context";
 export function RepairTool() {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
   const { source, useAsSource } = useWorkbench();
   const outputId = useId();
   const [justApplied, setJustApplied] = useState(false);
@@ -48,7 +47,6 @@ export function RepairTool() {
       <p
         className={cn(
           "text-[13px] leading-relaxed text-muted-foreground",
-          isFa && "font-fa-label",
         )}
       >
         {t.utilities.repairHint}
@@ -66,7 +64,6 @@ export function RepairTool() {
           <p
             className={cn(
               "text-[13px] font-medium text-destructive",
-              isFa && "font-fa-label",
             )}
           >
             {t.utilities.repairFailedTitle}
@@ -81,7 +78,6 @@ export function RepairTool() {
             <FixChips
               fixes={result.fixes}
               labels={t.utilities.repairFixes}
-              isFa={isFa}
             />
           ) : null}
         </div>
@@ -94,7 +90,6 @@ export function RepairTool() {
               role="status"
               className={cn(
                 "text-[13px] text-[var(--response)]",
-                isFa && "font-fa-label",
               )}
             >
               {t.utilities.repairApplied}
@@ -103,7 +98,6 @@ export function RepairTool() {
               onClick={applyToSource}
               className={cn(
                 "border-[var(--response)]/35 text-foreground",
-                isFa && "font-fa-label",
               )}
             >
               {t.source.useResult}
@@ -112,7 +106,6 @@ export function RepairTool() {
           <FixChips
             fixes={result.fixes}
             labels={t.utilities.repairFixes}
-            isFa={isFa}
           />
         </div>
       ) : null}
@@ -122,7 +115,6 @@ export function RepairTool() {
           role="status"
           className={cn(
             "text-[13px] text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {justApplied
@@ -153,11 +145,9 @@ export function RepairTool() {
 function FixChips({
   fixes,
   labels,
-  isFa,
 }: {
   fixes: RepairFixId[];
   labels: Record<RepairFixId, string>;
-  isFa: boolean;
 }) {
   if (fixes.length === 0) return null;
   return (
@@ -167,7 +157,6 @@ function FixChips({
           key={id}
           className={cn(
             "rounded-md border border-border bg-muted/30 px-2 py-0.5 text-[11.5px] text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {labels[id] ?? id}

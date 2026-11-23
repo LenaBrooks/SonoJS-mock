@@ -16,7 +16,6 @@ type Props = {
 export function ToolNav({ activeId, onSelect }: Props) {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
   const core = toolsByCategory("core");
   const rest = [
     ...toolsByCategory("transform"),
@@ -29,7 +28,6 @@ export function ToolNav({ activeId, onSelect }: Props) {
         <p
           className={cn(
             "shrink-0 text-[13px] font-semibold text-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {t.source.pickAction}
@@ -44,7 +42,6 @@ export function ToolNav({ activeId, onSelect }: Props) {
               label={
                 t.tools[tool.labelKey as keyof typeof t.tools] ?? tool.labelKey
               }
-              isFa={isFa}
             />
           ))}
         </ul>
@@ -61,7 +58,6 @@ export function ToolNav({ activeId, onSelect }: Props) {
               label={
                 t.tools[tool.labelKey as keyof typeof t.tools] ?? tool.labelKey
               }
-              isFa={isFa}
             />
           ))}
         </ul>
@@ -75,13 +71,11 @@ function ToolChip({
   active,
   onSelect,
   label,
-  isFa,
 }: {
   tool: ToolMeta;
   active: boolean;
   onSelect: (id: ToolId) => void;
   label: string;
-  isFa: boolean;
 }) {
   return (
     <li>
@@ -93,7 +87,6 @@ function ToolChip({
         className={cn(
           "inline-flex h-8 items-center rounded-full px-3 text-[12.5px] transition-colors",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--request)]/45",
-          isFa && "font-fa-label",
           active
             ? "border border-[var(--request)]/40 bg-[var(--request)]/15 font-medium text-foreground"
             : "border border-border bg-card text-foreground hover:border-[var(--request)]/40 hover:bg-[var(--surface-hover)]",

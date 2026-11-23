@@ -5,7 +5,7 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = createPageMetadata({
   title: "JSON Workbench",
   description:
-    "JSON Workbench (in development): format, validate, compare structure, search, and transform JSON in the browser — TypeScript, Zod, YAML, CSV, and utilities on MockData.",
+    "JSON Workbench (in development): format, validate, compare structure, search, and transform JSON in the browser - TypeScript, Zod, YAML, CSV, and utilities on SonoJS Mock.",
   path: "/json",
 });
 

@@ -9,7 +9,7 @@ export type ImageProvider = {
   resolve: (input: ImageProviderInput) => { redirectUrl: string };
 };
 
-/** Picsum — only MVP provider. Swap later without changing the public /image route. */
+/** Picsum - only MVP provider. Swap later without changing the public /image route. */
 export const picsumProvider: ImageProvider = {
   id: "picsum",
   resolve({ width, height, seed }) {

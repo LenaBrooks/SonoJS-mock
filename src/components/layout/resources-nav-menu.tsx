@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { useUiLocale } from "@/components/providers/ui-locale-provider";
 import { apiResources } from "@/lib/catalog";
@@ -24,30 +25,11 @@ function preloadResourceImages() {
   }
 }
 
-function positionForButton(
-  button: HTMLButtonElement,
-  isFa: boolean,
-): MenuPos {
+function positionForButton(button: HTMLButtonElement): MenuPos {
   const rect = button.getBoundingClientRect();
   const width = 200;
   const pad = 8;
   const top = rect.bottom + 4;
-  const maxLeft = window.innerWidth - width - pad;
-
-  if (isFa) {
-    // Open toward the right (reading start in FA): pin to button left when possible.
-    const openRightLeft = Math.min(Math.max(pad, rect.left), maxLeft);
-    const openRightFits = rect.left + width <= window.innerWidth - pad;
-    if (openRightFits || rect.left < window.innerWidth / 2) {
-      return { top, left: openRightLeft };
-    }
-    // Button near the right edge — keep menu on-screen by aligning to button end.
-    return {
-      top,
-      right: Math.max(pad, window.innerWidth - rect.right),
-    };
-  }
-
   const fitsStart = rect.left + width <= window.innerWidth - pad;
   if (fitsStart) {
     return { top, left: Math.max(pad, rect.left) };
@@ -60,13 +42,14 @@ function positionForButton(
 
 export function ResourcesNavMenu({
   className,
-  linkClassName,
+  compact = false,
 }: {
   className?: string;
-  linkClassName?: string;
+  /** Match header mobile nav link sizing. */
+  compact?: boolean;
 }) {
-  const { dict, locale } = useUiLocale();
-  const isFa = locale === "fa";
+  const pathname = usePathname();
+  const { dict } = useUiLocale();
   const [open, setOpen] = useState(false);
   const [menuPos, setMenuPos] = useState<MenuPos | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -82,8 +65,8 @@ export function ResourcesNavMenu({
       setMenuPos(null);
       return;
     }
-    setMenuPos(positionForButton(buttonRef.current, isFa));
-  }, [open, isFa]);
+    setMenuPos(positionForButton(buttonRef.current));
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -95,7 +78,7 @@ export function ResourcesNavMenu({
     }
     function onReposition() {
       if (!buttonRef.current) return;
-      setMenuPos(positionForButton(buttonRef.current, isFa));
+      setMenuPos(positionForButton(buttonRef.current));
     }
     document.addEventListener("mousedown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
@@ -107,7 +90,12 @@ export function ResourcesNavMenu({
       window.removeEventListener("resize", onReposition);
       window.removeEventListener("scroll", onReposition, true);
     };
-  }, [open, isFa]);
+  }, [open]);
+
+  const resourcesActive = apiResources.some(
+    (r) => pathname === r.href || pathname.startsWith(`${r.href}/`),
+  );
+  const navEmphasis = open || resourcesActive;
 
   return (
     <div ref={rootRef} className={cn("relative shrink-0", className)}>
@@ -121,22 +109,24 @@ export function ResourcesNavMenu({
         onPointerEnter={preloadResourceImages}
         onFocus={preloadResourceImages}
         className={cn(
-          "inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1.5 text-[13px] text-muted-foreground whitespace-nowrap transition-colors",
-          "hover:bg-[var(--surface-hover)] hover:text-foreground",
-          open && "bg-[var(--surface-hover)] text-foreground",
-          isFa && "font-fa-label",
-          linkClassName,
+          "relative inline-flex shrink-0 cursor-pointer items-center whitespace-nowrap transition-colors",
+          compact
+            ? "gap-1 px-1.5 py-1 text-[12px] md:px-2 md:text-[13px]"
+            : "gap-1 px-2.5 py-1 text-sm font-medium",
+          navEmphasis
+            ? "text-primary underline decoration-primary decoration-2 underline-offset-8"
+            : "text-muted-foreground hover:text-foreground",
         )}
       >
+        {dict.home.resourcesTitle}
         <ChevronDown
           className={cn(
-            "size-3.5 shrink-0 transition-transform",
+            "size-3.5 shrink-0 opacity-70 transition-transform",
             open && "rotate-180",
           )}
           strokeWidth={2}
           aria-hidden
         />
-        {dict.home.resourcesTitle}
       </button>
 
       {open && menuPos ? (
@@ -150,7 +140,7 @@ export function ResourcesNavMenu({
             right: menuPos.right,
           }}
           className="fixed z-50 max-h-[min(24rem,70vh)] w-[12.5rem] overflow-y-auto rounded-lg border border-border bg-background py-1 shadow-md"
-          dir={isFa ? "rtl" : "ltr"}
+          dir={"ltr"}
         >
           {apiResources.map((resource) => {
             const title =
@@ -165,7 +155,6 @@ export function ResourcesNavMenu({
                 onClick={() => setOpen(false)}
                 className={cn(
                   "flex items-center gap-2 px-2.5 py-1.5 text-start text-[13px] text-muted-foreground transition-colors hover:bg-[var(--surface-hover)] hover:text-foreground",
-                  isFa && "font-fa-label",
                 )}
               >
                 {/* Plain img: same URL as preload cache; avoids /_next/image first-paint delay */}

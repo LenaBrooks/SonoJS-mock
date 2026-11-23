@@ -14,7 +14,6 @@ export function TopicPicker({
   placeholder,
   searchPlaceholder,
   label,
-  isFa,
   emptySearchLabel,
 }: {
   value: string | null;
@@ -24,7 +23,6 @@ export function TopicPicker({
   placeholder: string;
   searchPlaceholder: string;
   label: string;
-  isFa: boolean;
   emptySearchLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -98,7 +96,6 @@ export function TopicPicker({
         id={`${listId}-label`}
         className={cn(
           "text-[13px] font-medium text-foreground",
-          isFa && "font-fa-label",
         )}
       >
         {label}
@@ -114,7 +111,6 @@ export function TopicPicker({
           "flex h-11 w-full items-center justify-between gap-2 rounded-xl border border-border bg-white px-3.5 text-start text-[14px] transition-colors dark:bg-background",
           "hover:border-foreground/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
           open && "border-foreground/30 ring-2 ring-foreground/15",
-          isFa && "font-fa-label",
         )}
       >
         <span className={cn("truncate", !value && "text-muted-foreground")}>
@@ -149,7 +145,6 @@ export function TopicPicker({
               placeholder={searchPlaceholder}
               className={cn(
                 "min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-muted-foreground",
-                isFa && "font-fa-label",
               )}
             />
           </div>
@@ -158,10 +153,9 @@ export function TopicPicker({
               <p
                 className={cn(
                   "px-1 py-8 text-center text-[13px] text-muted-foreground",
-                  isFa && "font-fa-label",
                 )}
               >
-                {emptySearchLabel ?? "—"}
+                {emptySearchLabel ?? "-"}
               </p>
             ) : (
               <div className="space-y-3">
@@ -170,7 +164,7 @@ export function TopicPicker({
                     <p
                       className={cn(
                         "text-[11px] font-medium text-muted-foreground",
-                        isFa ? "font-fa-label" : "uppercase tracking-wide",
+                        "uppercase tracking-wide",
                       )}
                     >
                       {categoryLabels[cat] ?? cat}
@@ -193,7 +187,6 @@ export function TopicPicker({
                               selected
                                 ? "border-[var(--request)]/40 bg-[var(--request)]/12 font-medium text-foreground"
                                 : "border-border text-muted-foreground hover:border-foreground/20 hover:bg-[var(--surface-hover)] hover:text-foreground",
-                              isFa && "font-fa-label",
                             )}
                             onClick={() => {
                               onChange(t.id);

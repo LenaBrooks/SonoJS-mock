@@ -61,7 +61,7 @@ export const seedPosts: SeedPost[] = [
   {
     authorUsername: "lmoreau",
     title: "French toast for developers",
-    body: "Not a recipe post — just a reminder that sample content should feel human, not lorem ipsum forever.",
+    body: "Not a recipe post - just a reminder that sample content should feel human, not lorem ipsum forever.",
     tags: ["writing", "content"],
     published: true,
   },
@@ -73,7 +73,7 @@ export const seedPosts: SeedPost[] = [
     published: true,
   },
   {
-    authorUsername: "ohassan",
+    authorUsername: "tbrooks",
     title: "OpenAPI as a living catalog",
     body: "When you add a resource, update schemas and paths in the same PR. Tools and AI assistants read that file first.",
     tags: ["openapi", "docs"],
@@ -103,7 +103,7 @@ export const seedPosts: SeedPost[] = [
   {
     authorUsername: "mjohansson",
     title: "Boolean query params",
-    body: "published=true and published=false should parse as booleans. Avoid coerce.boolean — the string false becomes true in JS.",
+    body: "published=true and published=false should parse as booleans. Avoid coerce.boolean - the string false becomes true in JS.",
     tags: ["zod", "validation"],
     published: true,
   },
@@ -115,7 +115,7 @@ export const seedPosts: SeedPost[] = [
     published: true,
   },
   {
-    authorUsername: "asaleh",
+    authorUsername: "lhayes",
     title: "Delay param for skeleton UIs",
     body: "Artificial latency helps you verify loading states. Cap it so nobody locks the playground for minutes.",
     tags: ["mock", "ui"],
@@ -171,8 +171,8 @@ export const seedPosts: SeedPost[] = [
     published: true,
   },
   {
-    authorUsername: "fzahra",
-    title: "Hello from MockData",
+    authorUsername: "eparker",
+    title: "Hello from SonoJS Mock",
     body: "A simple welcome post so new installs always have something to GET on day one.",
     tags: ["welcome"],
     published: true,

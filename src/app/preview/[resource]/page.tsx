@@ -25,21 +25,21 @@ export async function generateMetadata({
   if (resource === "auth") {
     return createPageMetadata({
       title: "Auth preview",
-      description: "Sample login UI on the MockData Auth API.",
+      description: "Sample login UI on the SonoJS Mock Auth API.",
       path: "/preview/auth",
     });
   }
   if (!isPreviewResourceId(resource)) {
     return createPageMetadata({
       title: "Preview",
-      description: "MockData resource preview",
+      description: "SonoJS Mock resource preview",
       path: `/preview/${resource}`,
     });
   }
   const config = previewResources[resource];
   return createPageMetadata({
     title: `${config.title} preview`,
-    description: `Sample UI built on the MockData ${config.title} API.`,
+    description: `Sample UI built on the SonoJS Mock ${config.title} API.`,
     path: `/preview/${resource}`,
   });
 }

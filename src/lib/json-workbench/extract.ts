@@ -5,7 +5,7 @@ export function extractKeys(value: unknown): string[] {
 
 /**
  * Every selectable field path in the document (objects, arrays, and leaves).
- * Parents appear before children — good for pick/omit chip UIs.
+ * Parents appear before children - good for pick/omit chip UIs.
  */
 export function listFieldPaths(value: unknown): string[] {
   const paths: string[] = [];

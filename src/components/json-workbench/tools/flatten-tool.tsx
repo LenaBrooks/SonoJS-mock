@@ -13,7 +13,6 @@ import { useWorkbench } from "../workbench-context";
 export function FlattenTool() {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
   const { source, parsed } = useWorkbench();
   const outputId = useId();
 
@@ -27,7 +26,6 @@ export function FlattenTool() {
       <p
         className={cn(
           "text-[13px] leading-relaxed text-muted-foreground",
-          isFa && "font-fa-label",
         )}
       >
         {t.utilities.flattenHint}

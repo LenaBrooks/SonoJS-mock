@@ -1,0 +1,54 @@
+/**
+ * Mock API playground / docs chrome — aligned with SonoJS Vega primary.
+ * Lives outside vega-tokens so the mock subdomain keeps HTTP semantics.
+ */
+
+.style-vega {
+  --vscode-bg: var(--code-bg);
+  --vscode-bg-elevated: var(--code-header-bg);
+  --vscode-border: var(--code-border);
+  --vscode-fg: var(--code-fg);
+  --vscode-comment: var(--code-syntax-comment);
+  --vscode-keyword: #569cd6;
+  --vscode-string: var(--code-syntax-string);
+  --vscode-number: var(--code-syntax-number);
+  --vscode-property: var(--code-syntax-variable);
+  --vscode-function: var(--code-syntax-function);
+  --vscode-operator: var(--code-syntax-operator);
+  --vscode-punctuation: var(--code-fg);
+  --vscode-line: var(--code-line-number);
+
+  --token: #0a5fad;
+  --request: var(--primary);
+  --request-fill: var(--primary);
+  --request-bg: color-mix(in oklab, var(--primary) 12%, transparent);
+  --response: #0f766e;
+  --response-bg: rgb(15 118 110 / 0.14);
+  --response-fg: #2dd4bf;
+
+  --get: #0d9488;
+  --post: #1d4ed8;
+  --patch: #7c3d0e;
+  --delete: var(--destructive);
+
+  --header-bg: rgb(255 255 255 / 0.4);
+  --surface-hover: color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+
+.dark .style-vega {
+  --token: #9cdcfe;
+  --request: var(--primary);
+  --request-fill: var(--primary);
+  --request-bg: color-mix(in oklab, var(--primary) 10%, transparent);
+  --response: #4ec9b0;
+  --response-bg: rgb(78 201 176 / 0.08);
+  --response-fg: #4ec9b0;
+
+  --get: #2dd4bf;
+  --post: #569cd6;
+  --patch: #dcdcaa;
+  --delete: #f14c4c;
+
+  --header-bg: rgb(9 9 11 / 0.55);
+  --surface-hover: color-mix(in oklab, var(--foreground) 8%, transparent);
+}

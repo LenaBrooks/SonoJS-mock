@@ -1,4 +1,4 @@
-import type { LocalePack } from "@/lib/generator/locales/types";
+import type { LocalePack } from "@/lib/generator/locale-pack";
 
 /** Deterministic-ish PRNG from seed + index (mulberry32). */
 export function createRng(seed: string, index: number): () => number {
@@ -36,17 +36,12 @@ export function int(rng: () => number, min: number, max: number): number {
   return Math.floor(rng() * (max - min + 1)) + min;
 }
 
-/** Whole-number money for generated data (no decimals). FA uses large IRR-style amounts. */
+/** Whole-number money for generated data (no decimals). */
 export function moneyAmount(
   rng: () => number,
-  uiLocale: "en" | "fa",
-  range?: { fa?: [number, number]; en?: [number, number] },
+  _uiLocale: "en" = "en",
+  range?: { en?: [number, number] },
 ): number {
-  if (uiLocale === "fa") {
-    const [min, max] = range?.fa ?? [50_000, 8_000_000];
-    // Round to nearest 1000 for cleaner FA prices
-    return int(rng, Math.ceil(min / 1000), Math.floor(max / 1000)) * 1000;
-  }
   const [min, max] = range?.en ?? [10, 999];
   return int(rng, min, max);
 }
@@ -71,152 +66,51 @@ export function slugify(value: string): string {
     .replace(/^-|-$/g, "");
 }
 
-/** Map Persian letters to Latin for usernames/emails (display names stay Persian). */
-const FA_LATIN: Record<string, string> = {
-  آ: "a",
-  ا: "a",
-  أ: "a",
-  إ: "e",
-  ب: "b",
-  پ: "p",
-  ت: "t",
-  ث: "s",
-  ج: "j",
-  چ: "ch",
-  ح: "h",
-  خ: "kh",
-  د: "d",
-  ذ: "z",
-  ر: "r",
-  ز: "z",
-  ژ: "zh",
-  س: "s",
-  ش: "sh",
-  ص: "s",
-  ض: "z",
-  ط: "t",
-  ظ: "z",
-  ع: "a",
-  غ: "gh",
-  ف: "f",
-  ق: "gh",
-  ک: "k",
-  گ: "g",
-  ل: "l",
-  م: "m",
-  ن: "n",
-  و: "v",
-  ه: "h",
-  ی: "y",
-  ي: "y",
-  ى: "y",
-  ئ: "y",
-  ؤ: "o",
-  ة: "h",
-  ء: "",
-  "\u200c": "",
-};
-
-export function transliterateFa(value: string): string {
-  let out = "";
-  for (const ch of value) {
-    if (FA_LATIN[ch] !== undefined) {
-      out += FA_LATIN[ch];
-      continue;
-    }
-    if (/[a-z0-9]/i.test(ch)) out += ch.toLowerCase();
-  }
-  return out;
-}
-
 export function fullName(pack: LocalePack, rng: () => number): string {
   return `${pick(rng, pack.firstNames)} ${pick(rng, pack.lastNames)}`;
 }
 
-const FEMALE_FIRST_NAMES = {
-  en: [
-    "Emily",
-    "Olivia",
-    "Ava",
-    "Sophia",
-    "Isabella",
-    "Mia",
-    "Emma",
-    "Charlotte",
-    "Amelia",
-    "Harper",
-  ],
-  fa: [
-    "سارا",
-    "مریم",
-    "زهرا",
-    "فاطمه",
-    "ندا",
-    "لیلا",
-    "یاسمن",
-    "نگار",
-    "هستی",
-    "نیلوفر",
-    "آناهیتا",
-    "مهسا",
-    "الهام",
-    "شیدا",
-    "کیمیا",
-  ],
-} as const;
+const FEMALE_FIRST_NAMES = [
+  "Emily",
+  "Olivia",
+  "Ava",
+  "Sophia",
+  "Isabella",
+  "Mia",
+  "Emma",
+  "Charlotte",
+  "Amelia",
+  "Harper",
+] as const;
 
-const MALE_FIRST_NAMES = {
-  en: [
-    "James",
-    "Michael",
-    "William",
-    "Noah",
-    "Liam",
-    "Ethan",
-    "Oliver",
-    "Benjamin",
-    "Lucas",
-    "Henry",
-  ],
-  fa: [
-    "رضا",
-    "حسین",
-    "امیر",
-    "محمد",
-    "پارسا",
-    "آرمان",
-    "کیان",
-    "آرش",
-    "سینا",
-    "پویا",
-    "بهراد",
-    "نیما",
-    "سامان",
-    "فرزاد",
-    "مهرداد",
-  ],
-} as const;
+const MALE_FIRST_NAMES = [
+  "James",
+  "Michael",
+  "William",
+  "Noah",
+  "Liam",
+  "Ethan",
+  "Oliver",
+  "Benjamin",
+  "Lucas",
+  "Henry",
+] as const;
 
 export function fullNameByGender(
   pack: LocalePack,
   rng: () => number,
-  uiLocale: "en" | "fa",
+  _uiLocale: "en" = "en",
   gender: "female" | "male",
 ): string {
   const first = pick(
     rng,
-    gender === "female"
-      ? FEMALE_FIRST_NAMES[uiLocale]
-      : MALE_FIRST_NAMES[uiLocale],
+    gender === "female" ? FEMALE_FIRST_NAMES : MALE_FIRST_NAMES,
   );
   return `${first} ${pick(rng, pack.lastNames)}`;
 }
 
 export function usernameFromName(name: string, rng: () => number): string {
-  let base = slugify(name).replace(/-/g, "");
-  if (base.length < 2) {
-    base = transliterateFa(name).replace(/\s+/g, "");
-  }
+  const base = slugify(name).replace(/-/g, "");
   if (base.length >= 2) return `${base.slice(0, 16)}${int(rng, 1, 99)}`;
   const fallback = ["user", "guest", "member", "dev", "maker"] as const;
   return `${pick(rng, fallback)}${int(rng, 10, 999)}`;
@@ -244,16 +138,11 @@ export function phone(pack: LocalePack, rng: () => number): string {
   const a = int(rng, 100, 999);
   const b = int(rng, 100, 999);
   const c = int(rng, 1000, 9999);
-  if (pack.postalPattern === "ir") {
-    return `${pack.phonePrefix} 9${int(rng, 10, 39)} ${a} ${b}`;
-  }
   return `${pack.phonePrefix} ${a} ${b} ${String(c).slice(0, 4)}`;
 }
 
 export function postalCode(pack: LocalePack, rng: () => number): string {
   switch (pack.postalPattern) {
-    case "ir":
-      return String(int(rng, 1000000000, 1999999999)).slice(0, 10);
     case "de":
     case "fr":
       return String(int(rng, 10000, 99999));

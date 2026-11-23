@@ -19,7 +19,7 @@ type ThemeContextValue = {
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
-const STORAGE_KEY = "mockdata-theme";
+const STORAGE_KEY = "sonojs-mock-theme";
 
 function readTheme(): Theme {
   const stored = window.localStorage.getItem(STORAGE_KEY);

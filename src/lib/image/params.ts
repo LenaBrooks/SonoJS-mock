@@ -10,7 +10,7 @@ export const IMAGE_DIM_PRESETS = [
   { w: 1200, h: 800, label: "1200×800" },
 ] as const;
 
-/** Named ready sizes — fill width/height via the dropdown. */
+/** Named ready sizes - fill width/height via the dropdown. */
 export const IMAGE_SIZE_PRESETS = [
   { id: "avatar", w: 64, h: 64 },
   { id: "thumbnail", w: 150, h: 150 },
@@ -99,7 +99,7 @@ export function newImageBatchId() {
 }
 
 /**
- * Public API path for copy/usage — only the queries the caller needs.
+ * Public API path for copy/usage - only the queries the caller needs.
  * Random by default: no `seed`. Pass `seed` only when pinning a stable image.
  */
 export function buildPublicImagePath(input: {
@@ -114,7 +114,7 @@ export function buildPublicImagePath(input: {
 }
 
 /**
- * Preview-only path. Seed is a UI helper so Generate refreshes the sample —
+ * Preview-only path. Seed is a UI helper so Generate refreshes the sample -
  * not part of the public copy URL.
  */
 export function buildPreviewPath(input: {

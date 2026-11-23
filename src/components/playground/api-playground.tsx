@@ -6,11 +6,6 @@ import { CopyButton } from "@/components/docs/copy-button";
 import { HighlightedJsonEditor } from "@/components/playground/highlighted-json-editor";
 import { useUiLocale } from "@/components/providers/ui-locale-provider";
 import { MOCK_PASSWORD } from "@/lib/auth/constants";
-import {
-  API_LOCALE_EVENT,
-  API_LOCALE_STORAGE_KEY,
-  type ApiLocale,
-} from "@/lib/api/locale-constants";
 import { actionLabels } from "@/lib/docs/action-labels";
 import {
   type PlaygroundResourceId,
@@ -97,8 +92,8 @@ function userCreateBody() {
       email: `pg_${Date.now().toString(36).slice(-6)}@example.com`,
       avatarUrl: "https://i.pravatar.cc/150?u=playground",
       role: "member",
-      city: "Tehran",
-      country: "Iran",
+      city: "London",
+      country: "United Kingdom",
     },
     null,
     2,
@@ -121,7 +116,7 @@ function postCreateBody(user?: UserOption | null) {
     {
       userId: user?.id ?? "<user-id>",
       title: "Playground post",
-      body: "Created from the MockData playground.",
+      body: "Created from the SonoJS Mock playground.",
       tags: ["playground"],
       published: true,
     },
@@ -183,7 +178,7 @@ function productCreateBody() {
   return JSON.stringify(
     {
       name: "Playground Mug",
-      description: "Created from the MockData playground.",
+      description: "Created from the SonoJS Mock playground.",
       price: 18.5,
       stock: 25,
       category: "kitchen",
@@ -199,7 +194,7 @@ function notificationCreateBody(user?: UserOption | null) {
     {
       userId: user?.id ?? "<user-id>",
       title: "Playground ping",
-      message: "Created from the MockData playground.",
+      message: "Created from the SonoJS Mock playground.",
       type: "info",
       read: false,
     },
@@ -543,7 +538,7 @@ type PlaygroundProps = {
 };
 
 export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
-  const { dict, locale: uiLocale } = useUiLocale();
+  const { dict } = useUiLocale();
   const initial = loadPlaygroundSession(initialResource);
   const [resource, setResource] = useState<ResourceId>(initial.resource);
   const [action, setAction] = useState<ActionId>(initial.action);
@@ -582,10 +577,8 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
   const [limit, setLimit] = useState(initial.limit);
   const [search, setSearch] = useState(initial.search);
   const [role, setRole] = useState(initial.role);
-  const [countryFilter, setCountryFilter] = useState(initial.countryFilter);
   const [sort, setSort] = useState(initial.sort);
   const [order, setOrder] = useState<"asc" | "desc" | "">(initial.order);
-  const [queryLang, setQueryLang] = useState<"en" | "fa">(initial.queryLang);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [methodOpen, setMethodOpen] = useState(false);
   const [responseView, setResponseView] = useState<"json" | "types">(
@@ -603,7 +596,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
   >(initial.uiByResource);
   const [error, setError] = useState<string | null>(initial.error);
   const [pending, startTransition] = useTransition();
-  const [apiLocale, setApiLocale] = useState<ApiLocale>(initial.apiLocale);
 
   const responseSnap = responsesByResource[resource] ?? EMPTY_RESPONSE;
   const responseText = responseSnap.text;
@@ -615,7 +607,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
   const status = responseSnap.status;
   const ms = responseSnap.ms;
   const lastUrl = responseSnap.lastUrl;
-  const responseIsFa = responseSnap.isFa;
 
   useEffect(() => {
     const currentUi: PlaygroundResourceUiSnap = {
@@ -630,7 +621,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
       limit,
       search,
       role,
-      countryFilter,
       sort,
       order,
     };
@@ -659,17 +649,14 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
         limit,
         search,
         role,
-        countryFilter,
         sort,
         order,
-        queryLang,
         responseView,
         token,
         tokenEditable,
         responsesByResource,
         uiByResource: nextUiByResource,
         error,
-        apiLocale,
       });
       return nextUiByResource;
     });
@@ -696,41 +683,14 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
     limit,
     search,
     role,
-    countryFilter,
     sort,
     order,
-    queryLang,
     responseView,
     token,
     tokenEditable,
     responsesByResource,
     error,
-    apiLocale,
   ]);
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(API_LOCALE_STORAGE_KEY);
-      const next = stored === "fa" ? "fa" : "en";
-      setApiLocale(next);
-      setQueryLang(next);
-    } catch {
-      setApiLocale("en");
-      setQueryLang("en");
-    }
-    // Drop legacy cookie so direct /api/* navigation stays English.
-    document.cookie =
-      "mockdata-api-locale=; path=/; max-age=0; SameSite=Lax";
-    function onLocale(e: Event) {
-      const detail = (e as CustomEvent<ApiLocale>).detail;
-      if (detail === "fa" || detail === "en") {
-        setApiLocale(detail);
-        setQueryLang(detail);
-      }
-    }
-    window.addEventListener(API_LOCALE_EVENT, onLocale);
-    return () => window.removeEventListener(API_LOCALE_EVENT, onLocale);
-  }, []);
 
   useEffect(() => {
     if (!methodOpen) return;
@@ -821,7 +781,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
 
   useEffect(() => {
     try {
-      const saved = sessionStorage.getItem("mockdata-playground-token");
+      const saved = sessionStorage.getItem("sonojs-mock-playground-token");
       if (saved) setToken(saved);
     } catch {
       /* ignore */
@@ -830,8 +790,8 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
 
   useEffect(() => {
     try {
-      if (token) sessionStorage.setItem("mockdata-playground-token", token);
-      else sessionStorage.removeItem("mockdata-playground-token");
+      if (token) sessionStorage.setItem("sonojs-mock-playground-token", token);
+      else sessionStorage.removeItem("sonojs-mock-playground-token");
     } catch {
       /* ignore */
     }
@@ -858,16 +818,14 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
     const needCountries = resource === "countries";
 
     async function loadJson(url: string) {
-      const withLang =
-        apiLocale === "fa" ? withQuery(url, { lang: "fa" }) : url;
-      const res = await fetch(withLang);
-      if (!res.ok) throw new Error(`Failed ${withLang}`);
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Failed ${url}`);
       return res.json();
     }
 
     (async () => {
       try {
-        // Load only what this resource needs, one request at a time —
+        // Load only what this resource needs, one request at a time -
         // avoids Neon connection timeouts from 9 parallel API hits.
         if (needUsers) {
           const payload = await loadJson(
@@ -982,7 +940,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
     return () => {
       cancelled = true;
     };
-  }, [resource, apiLocale]);
+  }, [resource, dict.playground.loadError]);
 
   useEffect(() => {
     if (manual) return;
@@ -1001,7 +959,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
       loginOk,
     });
     setMethod(built.method);
-    const resolvedLang = queryLang === "fa" ? "fa" : undefined;
     setPath(
       withQuery(built.path, {
         ...(isList
@@ -1010,14 +967,12 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
               limit,
               search: search.trim() || undefined,
               role: role || undefined,
-              country: countryFilter.trim() || undefined,
               sort: sort || undefined,
               order: order || undefined,
             }
           : {}),
         delay: forceDelay,
         status: forceStatus,
-        lang: resolvedLang,
       }),
     );
     setBody(built.body);
@@ -1039,13 +994,10 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
     limit,
     search,
     role,
-    countryFilter,
     sort,
     order,
-    queryLang,
     forceDelay,
     forceStatus,
-    apiLocale,
     manual,
   ]);
 
@@ -1076,7 +1028,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
     setLimit(snap.limit);
     setSearch(snap.search);
     setRole(snap.role);
-    setCountryFilter(snap.countryFilter);
     setSort(snap.sort);
     setOrder(snap.order);
   }
@@ -1096,7 +1047,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
       limit,
       search,
       role,
-      countryFilter,
       sort,
       order,
     };
@@ -1154,10 +1104,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
           /* keep raw */
         }
 
-        const isFa =
-          res.headers.get("content-language") === "fa" ||
-          /"font"\s*:/.test(pretty);
-
         setResponsesByResource((prev) => ({
           ...prev,
           [resourceKey]: {
@@ -1165,7 +1111,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
             status: res.status,
             ms: elapsed,
             lastUrl: requestUrl,
-            isFa,
           },
         }));
 
@@ -1282,7 +1227,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
             status: null,
             ms: null,
             lastUrl: requestUrl,
-            isFa: false,
           },
         }));
         setError(err instanceof Error ? err.message : "Request failed");
@@ -1296,9 +1240,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
         <span
           className={cn(
             "text-[11px] tracking-wide text-muted-foreground",
-            uiLocale === "fa"
-              ? "font-fa-label font-medium"
-              : "font-mono tracking-[0.14em] uppercase",
+            "font-mono font-medium",
           )}
         >
           {dict.playground.resource}
@@ -1317,7 +1259,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
               onClick={() => switchResource(item.id)}
               className={cn(
                 "rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors",
-                uiLocale === "fa" && "font-fa-label",
+                "font-mono",
                 resource === item.id
                   ? "border-[var(--request)]/45 bg-[var(--request)]/15 text-foreground"
                   : "border-border text-muted-foreground hover:border-[var(--request)]/35 hover:text-foreground",
@@ -1374,7 +1316,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setUserId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {users.map((user) => (
                     <option key={user.id} value={user.id}>
@@ -1399,7 +1341,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setPostId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {posts.map((post) => (
                     <option key={post.id} value={post.id}>
@@ -1424,7 +1366,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setUserId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {users.map((user) => (
                     <option key={user.id} value={user.id}>
@@ -1449,7 +1391,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setUserId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {users.map((user) => (
                     <option key={user.id} value={user.id}>
@@ -1474,7 +1416,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setUserId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {users.map((user) => (
                     <option key={user.id} value={user.id}>
@@ -1499,7 +1441,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setPostId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {posts.map((post) => (
                     <option key={post.id} value={post.id}>
@@ -1525,7 +1467,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setCommentId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {comments.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -1550,7 +1492,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setAlbumId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {albumsList.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -1575,7 +1517,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setPhotoId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {photosList.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -1600,7 +1542,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setTodoId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {todosList.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -1625,7 +1567,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setProductId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {productsList.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -1650,7 +1592,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setNotificationId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {notificationsList.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -1675,7 +1617,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setCountryId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {countriesList.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -1700,7 +1642,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                     setUserId(e.target.value);
                     setManual(false);
                   }}
-                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                  className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 text-[13px] field-focus"
                 >
                   {users.map((user) => (
                     <option key={user.id} value={user.id}>
@@ -1793,7 +1735,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                 aria-expanded={methodOpen}
                 onClick={() => setMethodOpen((open) => !open)}
                 className={cn(
-                  "inline-flex h-11 min-h-11 w-[5.75rem] items-center justify-between gap-1 rounded-md border border-border bg-muted px-2.5 font-mono text-[13px] font-semibold outline-none focus-visible:border-[var(--request)]/50",
+                  "inline-flex h-11 min-h-11 w-[5.75rem] items-center justify-between gap-1 rounded-md border border-border bg-muted px-2.5 font-mono text-[13px] font-semibold field-focus",
                   methodColor[method],
                 )}
               >
@@ -1846,7 +1788,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                 setManual(true);
               }}
               spellCheck={false}
-              className="box-border h-11 min-h-11 min-w-0 flex-1 rounded-md border border-border bg-muted px-3 font-mono text-[13px] leading-none text-foreground outline-none focus-visible:border-[var(--request)]/50 ltr-tech"
+              className="box-border h-11 min-h-11 min-w-0 flex-1 rounded-md border border-border bg-muted px-3 font-mono text-[13px] leading-none text-foreground field-focus ltr-tech"
               placeholder="/api/users"
               dir="ltr"
             />
@@ -1953,7 +1895,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                       setLimit(Number(e.target.value));
                       setManual(false);
                     }}
-                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
+                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] field-focus"
                   >
                     {[3, 6, 12, 24, 50].map((n) => (
                       <option key={n} value={n}>
@@ -1978,7 +1920,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                       setManual(false);
                     }}
                     spellCheck={false}
-                    className="h-9 w-full rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
+                    className="h-9 w-full rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] field-focus"
                   />
                 </div>
 
@@ -1996,32 +1938,13 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                       setRole(e.target.value);
                       setManual(false);
                     }}
-                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
+                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] field-focus"
                   >
                     <option value="">Off</option>
                     <option value="admin">admin</option>
                     <option value="member">member</option>
                     <option value="guest">guest</option>
                   </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="playground-country-filter"
-                    className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase"
-                  >
-                    country
-                  </label>
-                  <input
-                    id="playground-country-filter"
-                    value={countryFilter}
-                    onChange={(e) => {
-                      setCountryFilter(e.target.value);
-                      setManual(false);
-                    }}
-                    spellCheck={false}
-                    className="h-9 w-full rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
-                  />
                 </div>
 
                 <div className="space-y-1.5">
@@ -2038,7 +1961,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                       setSort(e.target.value);
                       setManual(false);
                     }}
-                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
+                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] field-focus"
                   >
                     <option value="">Off</option>
                     <option value="createdAt">createdAt</option>
@@ -2063,7 +1986,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                       setOrder(e.target.value as "asc" | "desc" | "");
                       setManual(false);
                     }}
-                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
+                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] field-focus"
                   >
                     <option value="">Off</option>
                     <option value="asc">asc</option>
@@ -2073,50 +1996,20 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
 
                 <div className="space-y-1.5">
                   <label
-                    htmlFor="playground-lang"
-                    className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase"
-                  >
-                    lang
-                  </label>
-                  <select
-                    id="playground-lang"
-                    value={queryLang}
-                    onChange={(e) => {
-                      setQueryLang(e.target.value as "en" | "fa");
-                      setManual(false);
-                    }}
-                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
-                  >
-                    {queryLang === "fa" ? (
-                      <>
-                        <option value="fa">fa</option>
-                        <option value="en">en</option>
-                      </>
-                    ) : (
-                      <>
-                        <option value="en">en</option>
-                        <option value="fa">fa</option>
-                      </>
-                    )}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="playground-force-delay"
+                    htmlFor="playground-force-delay-list"
                     className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase"
                   >
                     delay
                   </label>
                   <select
-                    id="playground-force-delay"
+                    id="playground-force-delay-list"
                     value={forceDelay === "" ? "" : String(forceDelay)}
                     onChange={(e) => {
                       const value = e.target.value;
                       setForceDelay(value ? Number(value) : "");
                       setManual(false);
                     }}
-                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
+                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] field-focus"
                   >
                     <option value="">Off</option>
                     <option value="300">300</option>
@@ -2129,20 +2022,20 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
 
                 <div className="space-y-1.5">
                   <label
-                    htmlFor="playground-force-status"
+                    htmlFor="playground-force-status-list"
                     className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase"
                   >
                     status
                   </label>
                   <select
-                    id="playground-force-status"
+                    id="playground-force-status-list"
                     value={forceStatus === "" ? "" : String(forceStatus)}
                     onChange={(e) => {
                       const value = e.target.value;
                       setForceStatus(value ? Number(value) : "");
                       setManual(false);
                     }}
-                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
+                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] field-focus"
                   >
                     <option value="">Off</option>
                     <option value="400">400</option>
@@ -2208,36 +2101,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="space-y-1.5">
                   <label
-                    htmlFor="playground-lang"
-                    className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase"
-                  >
-                    lang
-                  </label>
-                  <select
-                    id="playground-lang"
-                    value={queryLang}
-                    onChange={(e) => {
-                      setQueryLang(e.target.value as "en" | "fa");
-                      setManual(false);
-                    }}
-                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
-                  >
-                    {queryLang === "fa" ? (
-                      <>
-                        <option value="fa">fa</option>
-                        <option value="en">en</option>
-                      </>
-                    ) : (
-                      <>
-                        <option value="en">en</option>
-                        <option value="fa">fa</option>
-                      </>
-                    )}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label
                     htmlFor="playground-force-delay"
                     className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase"
                   >
@@ -2251,7 +2114,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                       setForceDelay(value ? Number(value) : "");
                       setManual(false);
                     }}
-                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
+                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] field-focus"
                   >
                     <option value="">Off</option>
                     <option value="300">300</option>
@@ -2277,7 +2140,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                       setForceStatus(value ? Number(value) : "");
                       setManual(false);
                     }}
-                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] outline-none focus-visible:border-[var(--request)]/50"
+                    className="h-9 w-full cursor-pointer rounded-md border border-border bg-muted px-2.5 font-mono text-[12px] field-focus"
                   >
                     <option value="">Off</option>
                     <option value="400">400</option>
@@ -2388,7 +2251,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
             <span
               className={cn("font-mono text-[12px] font-semibold", statusTone)}
             >
-              {status == null ? "—" : status}
+              {status == null ? "-" : status}
             </span>
             {ms != null ? (
               <span className="font-mono text-[11px] text-muted-foreground">
@@ -2414,11 +2277,6 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
         ) : null}
         <div className="code-pane overflow-hidden rounded-lg border border-[var(--vscode-border)] bg-[var(--vscode-bg)]">
           <div className="flex items-center gap-2 border-b border-[var(--vscode-border)] bg-[var(--vscode-bg-elevated)] px-3 py-2">
-            <div className="flex items-center gap-1.5" aria-hidden>
-              <span className="size-2.5 rounded-full bg-[#ff5f56]" />
-              <span className="size-2.5 rounded-full bg-[#ffbd2e]" />
-              <span className="size-2.5 rounded-full bg-[#27c93f]" />
-            </div>
             <span className="font-mono text-[11px] font-semibold text-[var(--response-fg)]">
               {responseView === "types" ? "TS" : "JSON"}
             </span>
@@ -2466,9 +2324,7 @@ export function ApiPlayground({ initialResource = "users" }: PlaygroundProps) {
                   <span className="min-w-0 flex-1 break-all pr-4 whitespace-pre-wrap">
                     {responseView === "types"
                       ? highlightCode(line.length ? line : " ", "types")
-                      : highlightCode(line.length ? line : " ", "json", {
-                          persianStrings: responseIsFa || apiLocale === "fa",
-                        })}
+                      : highlightCode(line.length ? line : " ", "json")}
                   </span>
                 </span>
               ))}

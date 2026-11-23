@@ -7,8 +7,8 @@ import {
 import {
   resolveLocalePack,
   isGeneratorCountryCode,
-} from "@/lib/generator/locales";
-import type { GeneratorCountryCode } from "@/lib/generator/locales/types";
+} from "@/lib/generator/locale-pack";
+import type { GeneratorCountryCode } from "@/lib/generator/locale-pack";
 import { orderedFieldKeys } from "@/lib/generator/modes";
 import {
   allowedFieldIds,
@@ -21,7 +21,7 @@ export type GenerateBatchInput = {
   fields: string[];
   quantity: number;
   country: string;
-  uiLocale: "en" | "fa";
+  uiLocale: "en";
   seed?: string;
 };
 
@@ -81,7 +81,7 @@ export function generateBatch(
     return { ok: false, error: "INVALID_QUANTITY" };
   }
 
-  if (!isGeneratorCountryCode(input.country) && input.uiLocale !== "fa") {
+  if (!isGeneratorCountryCode(input.country)) {
     return { ok: false, error: "INVALID_COUNTRY" };
   }
 
@@ -90,14 +90,11 @@ export function generateBatch(
   if (fields.size === 0) return { ok: false, error: "INVALID_FIELDS" };
 
   const seed = input.seed ?? `gen-${topic.id}-${Date.now()}`;
-  const country =
-    input.uiLocale === "fa"
-      ? ("IR" as const)
-      : (input.country as GeneratorCountryCode | "all");
+  const country = input.country as GeneratorCountryCode | "all";
 
   const data: Record<string, unknown>[] = [];
   for (let i = 0; i < quantity; i++) {
-    const pack = resolveLocalePack(country, i, input.uiLocale);
+    const pack = resolveLocalePack(country, i);
     const ctx: GenerateContext = {
       index: i,
       seed,
@@ -122,7 +119,7 @@ export async function generateBatchChunked(
   if (quantity < 1 || quantity > GENERATOR_MAX_RECORDS) {
     return { ok: false, error: "INVALID_QUANTITY" };
   }
-  if (!isGeneratorCountryCode(input.country) && input.uiLocale !== "fa") {
+  if (!isGeneratorCountryCode(input.country)) {
     return { ok: false, error: "INVALID_COUNTRY" };
   }
 
@@ -131,16 +128,13 @@ export async function generateBatchChunked(
   if (fields.size === 0) return { ok: false, error: "INVALID_FIELDS" };
 
   const seed = input.seed ?? `gen-${topic.id}-${Date.now()}`;
-  const country =
-    input.uiLocale === "fa"
-      ? ("IR" as const)
-      : (input.country as GeneratorCountryCode | "all");
+  const country = input.country as GeneratorCountryCode | "all";
 
   const data: Record<string, unknown>[] = [];
   const chunk = quantity >= 200 ? 100 : quantity;
 
   for (let i = 0; i < quantity; i++) {
-    const pack = resolveLocalePack(country, i, input.uiLocale);
+    const pack = resolveLocalePack(country, i);
     const ctx: GenerateContext = {
       index: i,
       seed,

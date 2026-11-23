@@ -24,12 +24,10 @@ import {
 
 const TAGS = {
   en: ["design", "frontend", "api", "productivity", "ux", "typescript"],
-  fa: ["طراحی", "فرانت‌اند", "api", "بهره‌وری", "ux", "typescript"],
 };
 
 const NOTIF_TYPES = {
   en: ["info", "success", "warning", "message", "system"] as const,
-  fa: ["اطلاع", "موفق", "هشدار", "پیام", "سیستم"] as const,
 };
 
 export const contentTopics: GeneratorTopic[] = [
@@ -51,17 +49,15 @@ export const contentTopics: GeneratorTopic[] = [
     ],
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
-      const title = pick(rng, contentList("postTitles", ctx.uiLocale));
+      const title = pick(rng, contentList("postTitles"));
       const record: Record<string, unknown> = {
         id: id("pst", ctx.index, rng),
         title,
         body:
-          ctx.uiLocale === "fa"
-            ? `${title}. نکاتی کاربردی برای ساخت رابط‌های بهتر با دردسر کمتر.`
-            : `${title}. Practical notes for building better interfaces with less friction.`,
+          `${title}. Practical notes for building better interfaces with less friction.`,
         author: fullName(ctx.pack, rng),
         image: imageUrl(`post-${ctx.seed}-${ctx.index}`),
-        tags: pickN(rng, TAGS[ctx.uiLocale], int(rng, 1, 3)),
+        tags: pickN(rng, TAGS["en"], int(rng, 1, 3)),
         publishedAt: isoDate(rng, 200),
         likes: int(rng, 0, 900),
         views: int(rng, 40, 20000),
@@ -86,15 +82,8 @@ export const contentTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const comments =
-        ctx.uiLocale === "fa"
-          ? [
-              "خیلی کمک کرد — ممنون!",
-              "کنجکاوم روی لیست‌های بزرگ چطور مقیاس می‌گیره.",
-              "توضیح واضح بود، ذخیره کردم.",
-              "خوشحال می‌شم ادامهٔ موارد خاص رو ببینی.",
-            ]
-          : [
-              "This helped a lot — thanks!",
+        [
+              "This helped a lot â€” thanks!",
               "Curious how this scales with large lists.",
               "Clear explanation, bookmarking this.",
               "Would love a follow-up on edge cases.",
@@ -104,7 +93,7 @@ export const contentTopics: GeneratorTopic[] = [
         user: fullName(ctx.pack, rng),
         comment: pick(rng, comments),
         date: isoDate(rng, 90),
-        post: pick(rng, contentList("postTitles", ctx.uiLocale)),
+        post: pick(rng, contentList("postTitles")),
         likes: int(rng, 0, 240),
         replies: int(rng, 0, 18),
       };
@@ -127,18 +116,11 @@ export const contentTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const messages =
-        ctx.uiLocale === "fa"
-          ? [
-              "پیش‌نویس آخر را می‌بینی؟",
-              "جلسه رفت ساعت ۳.",
-              "از سمت من اوکیه.",
-              "فایل‌ها را کمی دیگر می‌فرستم.",
-            ]
-          : [
+        [
               "Can you review the latest draft?",
               "Meeting moved to 3pm.",
               "Looks good on my end.",
-              "Sending the files shortly.",
+              "Sending the files sholtry.",
             ];
       const record: Record<string, unknown> = {
         id: id("msg", ctx.index, rng),
@@ -168,15 +150,7 @@ export const contentTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const titles =
-        ctx.uiLocale === "fa"
-          ? [
-              "کامنت جدید",
-              "پرداخت دریافت شد",
-              "خلاصه هفتگی",
-              "هشدار امنیتی",
-              "دعوت پذیرفته شد",
-            ]
-          : [
+        [
               "New comment",
               "Payment received",
               "Weekly digest",
@@ -188,10 +162,8 @@ export const contentTopics: GeneratorTopic[] = [
         id: id("ntf", ctx.index, rng),
         title,
         message:
-          ctx.uiLocale === "fa"
-            ? `${title}: برای جزئیات اپ را باز کنید.`
-            : `${title}: open the app to see details.`,
-        type: pick(rng, NOTIF_TYPES[ctx.uiLocale]),
+          `${title}: open the app to see details.`,
+        type: pick(rng, NOTIF_TYPES["en"]),
         date: isoDate(rng, 14),
         read: rng() > 0.5,
         actionUrl: `/notifications/${ctx.index + 1}`,
@@ -214,7 +186,7 @@ export const contentTopics: GeneratorTopic[] = [
     ],
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
-      const name = pick(rng, TAGS[ctx.uiLocale]);
+      const name = pick(rng, TAGS["en"]);
       const colors = ["#2563eb", "#16a34a", "#ca8a04", "#dc2626", "#7c3aed", "#0891b2"];
       const record: Record<string, unknown> = {
         id: id("tag", ctx.index, rng),
@@ -222,9 +194,7 @@ export const contentTopics: GeneratorTopic[] = [
         slug: slugify(name) || `tag-${ctx.index + 1}`,
         postsCount: int(rng, 2, 900),
         description:
-          ctx.uiLocale === "fa"
-            ? `محتواهای مرتبط با ${name}.`
-            : `Posts tagged with ${name}.`,
+          `Posts tagged with ${name}.`,
         color: pick(rng, colors),
         followers: int(rng, 10, 50_000),
       };
@@ -247,23 +217,17 @@ export const contentTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const names =
-        ctx.uiLocale === "fa"
-          ? ["آموزش", "خبر", "نقد", "راهنما", "داستان", "فناوری"]
-          : ["Tutorials", "News", "Reviews", "Guides", "Stories", "Tech"];
+        ["Tutorials", "News", "Reviews", "Guides", "Stories", "Tech"];
       const name = pick(rng, names);
       const parents =
-        ctx.uiLocale === "fa"
-          ? ["محتوا", "وبلاگ", "مجله", null]
-          : ["Content", "Blog", "Magazine", null];
+        ["Content", "Blog", "Magazine", null];
       const record: Record<string, unknown> = {
         id: id("ccat", ctx.index, rng),
         name,
         slug: slugify(name) || `content-cat-${ctx.index + 1}`,
         postsCount: int(rng, 5, 400),
         description:
-          ctx.uiLocale === "fa"
-            ? `دسته‌بندی ${name} برای مقالات و پست‌ها.`
-            : `${name} category for articles and posts.`,
+          `${name} category for articles and posts.`,
         parentCategory: pick(rng, parents),
         image: imageUrl(`ccat-${ctx.index}`, 400, 240),
       };
@@ -285,17 +249,13 @@ export const contentTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const targetTypes =
-        ctx.uiLocale === "fa"
-          ? ["پست", "کامنت", "تصویر", "ویدیو"]
-          : ["post", "comment", "image", "video"];
+        ["post", "comment", "image", "video"];
       const reactions =
-        ctx.uiLocale === "fa"
-          ? ["پسند", "عاشق", "خنده", "آفرین"]
-          : ["like", "love", "laugh", "clap"];
+        ["like", "love", "laugh", "clap"];
       const record: Record<string, unknown> = {
         id: id("lik", ctx.index, rng),
         user: fullName(ctx.pack, rng),
-        target: pick(rng, contentList("postTitles", ctx.uiLocale)),
+        target: pick(rng, contentList("postTitles")),
         targetType: pick(rng, targetTypes),
         date: isoDate(rng, 60),
         reaction: pick(rng, reactions),

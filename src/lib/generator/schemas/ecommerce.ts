@@ -32,21 +32,17 @@ import {
 
 const ORDER_STATUSES = {
   en: ["pending", "processing", "shipped", "delivered", "cancelled"] as const,
-  fa: ["در انتظار", "در حال پردازش", "ارسال‌شده", "تحویل‌شده", "لغوشده"] as const,
 };
 const PAYMENT_STATUSES = {
   en: ["paid", "pending", "failed", "refunded"] as const,
-  fa: ["پرداخت‌شده", "در انتظار", "ناموفق", "بازگشت‌شده"] as const,
 };
 const PAYMENT_METHODS = {
   en: ["card", "paypal", "bank_transfer", "cash", "wallet"] as const,
-  fa: ["کارت", "پی‌پال", "کارت‌به‌کارت", "نقد", "کیف‌پول"] as const,
 };
 const CARRIERS = ["DHL", "FedEx", "UPS", "USPS", "Poste"] as const;
 const COUPON_TYPES = ["percent", "fixed"] as const;
 const SHIP_STATUSES = {
   en: ["label_created", "in_transit", "out_for_delivery", "delivered"] as const,
-  fa: ["برچسب ساخته شد", "در مسیر", "آماده تحویل", "تحویل‌شده"] as const,
 };
 
 export const ecommerceTopics: GeneratorTopic[] = [
@@ -72,25 +68,20 @@ export const ecommerceTopics: GeneratorTopic[] = [
     ],
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
-      const name = pick(rng, contentList("productNames", ctx.uiLocale));
+      const name = pick(rng, contentList("productNames"));
       const colors =
-        ctx.uiLocale === "fa"
-          ? ["مشکی", "سفید", "آبی", "نقره‌ای"]
-          : ["black", "white", "blue", "silver"];
+        ["black", "white", "blue", "silver"];
       const record: Record<string, unknown> = {
         id: id("prd", ctx.index, rng),
         name,
-        price: moneyAmount(rng, ctx.uiLocale, {
-          fa: [80_000, 25_000_000],
+        price: moneyAmount(rng, "en", {
           en: [10, 499],
         }),
         currency: ctx.pack.currency,
         image: imageUrl(`prd-${ctx.seed}-${ctx.index}`),
-        category: pick(rng, contentList("productCategories", ctx.uiLocale)),
+        category: pick(rng, contentList("productCategories")),
         description:
-          ctx.uiLocale === "fa"
-            ? `${name} با کیفیت مناسب برای استفاده روزمره.`
-            : `A quality ${name.toLowerCase()} for everyday use.`,
+          `A quality ${name.toLowerCase()} for everyday use.`,
         brand: pick(rng, ctx.pack.companies),
         stock: int(rng, 0, 250),
         rating: float(rng, 3.2, 5, 1),
@@ -121,10 +112,9 @@ export const ecommerceTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const itemCount = int(rng, 1, 5);
-      const names = contentList("productNames", ctx.uiLocale);
+        const names = contentList("productNames");
       const items = Array.from({ length: itemCount }, () => {
-        const price = moneyAmount(rng, ctx.uiLocale, {
-          fa: [50_000, 3_000_000],
+        const price = moneyAmount(rng, "en", {
           en: [8, 120],
         });
         const qty = int(rng, 1, 3);
@@ -140,21 +130,19 @@ export const ecommerceTopics: GeneratorTopic[] = [
       const street = streetAddress(ctx.pack, rng);
       const postal = postalCode(ctx.pack, rng);
       const shippingAddress =
-        ctx.uiLocale === "fa"
-          ? `${street}، ${loc.city}، ${loc.region}، ${ctx.pack.countryName}، ${postal}`
-          : `${street}, ${loc.city}, ${loc.region}, ${ctx.pack.countryName}, ${postal}`;
+        `${street}, ${loc.city}, ${loc.region}, ${ctx.pack.countryName}, ${postal}`;
       const record: Record<string, unknown> = {
         id:
-          ctx.uiLocale === "fa"
+          false
             ? String(10000 + ctx.index + int(rng, 0, 900))
             : `ORD-${10000 + ctx.index + int(rng, 0, 50)}`,
         customer: fullName(ctx.pack, rng),
         items,
         total,
         currency: ctx.pack.currency,
-        status: pick(rng, ORDER_STATUSES[ctx.uiLocale]),
+        status: pick(rng, ORDER_STATUSES["en"]),
         orderDate: isoDate(rng, 180),
-        paymentStatus: pick(rng, PAYMENT_STATUSES[ctx.uiLocale]),
+        paymentStatus: pick(rng, PAYMENT_STATUSES["en"]),
         shippingAddress,
         country: ctx.pack.countryName,
       };
@@ -179,9 +167,7 @@ export const ecommerceTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const titles =
-        ctx.uiLocale === "fa"
-          ? ["عالی", "ارزش خرید", "تقریباً کامل", "پیشنهاد می‌کنم", "خوب"]
-          : [
+        [
               "Great product",
               "Worth it",
               "Almost perfect",
@@ -192,9 +178,9 @@ export const ecommerceTopics: GeneratorTopic[] = [
         id: id("rev", ctx.index, rng),
         user: fullName(ctx.pack, rng),
         rating: int(rng, 1, 5),
-        comment: pick(rng, contentList("reviewComments", ctx.uiLocale)),
+        comment: pick(rng, contentList("reviewComments")),
         date: isoDate(rng, 200),
-        product: pick(rng, contentList("productNames", ctx.uiLocale)),
+        product: pick(rng, contentList("productNames")),
         title: pick(rng, titles),
         verified: rng() > 0.35,
         helpful: int(rng, 0, 80),
@@ -217,19 +203,15 @@ export const ecommerceTopics: GeneratorTopic[] = [
     ],
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
-      const name = pick(rng, contentList("productCategories", ctx.uiLocale));
+      const name = pick(rng, contentList("productCategories"));
       const parents =
-        ctx.uiLocale === "fa"
-          ? ["فروشگاه", "کاتالوگ", "ویژه", null]
-          : ["Shop", "Catalog", "Featured", null];
+        ["Shop", "Catalog", "Featured", null];
       const record: Record<string, unknown> = {
         id: id("cat", ctx.index, rng),
         name,
         slug: slugify(name) || `cat-${ctx.index}`,
         description:
-          ctx.uiLocale === "fa"
-            ? `مرور محصولات ${name}.`
-            : `Browse ${name.toLowerCase()} products.`,
+          `Browse ${name.toLowerCase()} products.`,
         image: imageUrl(`cat-${ctx.index}`, 400, 300),
         parentCategory: pick(rng, parents),
         productCount: int(rng, 4, 220),
@@ -253,19 +235,17 @@ export const ecommerceTopics: GeneratorTopic[] = [
     ],
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
-      const price = moneyAmount(rng, ctx.uiLocale, {
-        fa: [50_000, 4_000_000],
+      const price = moneyAmount(rng, "en", {
         en: [5, 150],
       });
       const quantity = int(rng, 1, 4);
-      const discount = moneyAmount(rng, ctx.uiLocale, {
-        fa: [0, 200_000],
+      const discount = moneyAmount(rng, "en", {
         en: [0, 15],
       });
       const total = Math.max(0, price * quantity - discount);
       const record: Record<string, unknown> = {
         id: id("crt", ctx.index, rng),
-        product: pick(rng, contentList("productNames", ctx.uiLocale)),
+        product: pick(rng, contentList("productNames")),
         quantity,
         price,
         total,
@@ -300,14 +280,12 @@ export const ecommerceTopics: GeneratorTopic[] = [
         discount:
           type === "percent"
             ? int(rng, 5, 40)
-            : moneyAmount(rng, ctx.uiLocale, {
-                fa: [50_000, 500_000],
+            : moneyAmount(rng, "en", {
                 en: [5, 50],
               }),
         type,
         expiresAt: isoDateFuture(rng, 180),
-        minimumOrder: moneyAmount(rng, ctx.uiLocale, {
-          fa: [100_000, 2_000_000],
+        minimumOrder: moneyAmount(rng, "en", {
           en: [20, 100],
         }),
         usageLimit: int(rng, 50, 5000),
@@ -334,13 +312,12 @@ export const ecommerceTopics: GeneratorTopic[] = [
       const rng = createRng(ctx.seed, ctx.index);
       const record: Record<string, unknown> = {
         id: id("pay", ctx.index, rng),
-        amount: moneyAmount(rng, ctx.uiLocale, {
-          fa: [50_000, 15_000_000],
+        amount: moneyAmount(rng, "en", {
           en: [12, 899],
         }),
         currency: ctx.pack.currency,
-        status: pick(rng, PAYMENT_STATUSES[ctx.uiLocale]),
-        paymentMethod: pick(rng, PAYMENT_METHODS[ctx.uiLocale]),
+        status: pick(rng, PAYMENT_STATUSES["en"]),
+        paymentMethod: pick(rng, PAYMENT_METHODS["en"]),
         transactionId: `txn_${int(rng, 100000, 999999)}`,
         date: isoDate(rng, 120),
         customer: fullName(ctx.pack, rng),
@@ -368,7 +345,7 @@ export const ecommerceTopics: GeneratorTopic[] = [
         id: id("shp", ctx.index, rng),
         order: `ORD-${10000 + ctx.index}`,
         carrier,
-        status: pick(rng, SHIP_STATUSES[ctx.uiLocale]),
+        status: pick(rng, SHIP_STATUSES["en"]),
         trackingNumber: `${carrier.slice(0, 3).toUpperCase()}${int(rng, 1e9, 2e9)}`,
         estimatedDelivery: isoDateFuture(rng, 14),
         country: ctx.pack.countryName,
@@ -395,20 +372,15 @@ export const ecommerceTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const statuses =
-        ctx.uiLocale === "fa"
-          ? ["پرداخت‌شده", "در انتظار", "سررسید گذشته", "پیش‌نویس"]
-          : ["paid", "pending", "overdue", "draft"];
-      const amount = moneyAmount(rng, ctx.uiLocale, {
-        fa: [200_000, 40_000_000],
+        ["paid", "pending", "overdue", "draft"];
+      const amount = moneyAmount(rng, "en", {
         en: [40, 2400],
       });
       const tax = Math.round(amount * 0.09);
       const record: Record<string, unknown> = {
         id: id("inv", ctx.index, rng),
         invoiceNumber:
-          ctx.uiLocale === "fa"
-            ? `INV-${10000 + ctx.index + int(rng, 0, 200)}`
-            : `INV-${10000 + ctx.index + int(rng, 0, 200)}`,
+          `INV-${10000 + ctx.index + int(rng, 0, 200)}`,
         customer: fullName(ctx.pack, rng),
         amount,
         status: pick(rng, statuses),
@@ -446,13 +418,9 @@ export const ecommerceTopics: GeneratorTopic[] = [
         slug: slugify(name) || `brand-${ctx.index + 1}`,
         country: ctx.pack.countryName,
         description:
-          ctx.uiLocale === "fa"
-            ? `برند ${name} در حوزه خرده‌فروشی و محصولات مصرفی.`
-            : `${name} — consumer products and retail brand.`,
+          `${name} â€” consumer products and retail brand.`,
         website:
-          ctx.uiLocale === "fa"
-            ? `https://example.ir/brands/${ctx.index + 1}`
-            : `https://example.com/brands/${ctx.index + 1}`,
+          `https://example.com/brands/${ctx.index + 1}`,
         productCount: int(rng, 8, 420),
         founded: int(rng, 1960, 2020),
       };

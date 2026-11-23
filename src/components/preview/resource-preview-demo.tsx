@@ -7,9 +7,10 @@ import {
   type PreviewField,
   type PreviewResourceId,
 } from "@/lib/preview/resources";
-import { withApiLang } from "@/lib/api/use-api-locale";
+import { catalogPreviewWritable } from "@/lib/api/catalog-client-policy";
+import { apiPath } from "@/lib/api/use-api-locale";
 import { useUiLocale } from "@/components/providers/ui-locale-provider";
-import { formatApiDate } from "@/lib/i18n/format";
+import { formatApiDate } from "@/lib/locale/format";
 import { cn } from "@/lib/utils";
 
 type Row = Record<string, unknown> & { id: string | number };
@@ -25,17 +26,12 @@ type CacheBucket = { rows: Row[]; pagination: Pagination };
 
 const listCache = new Map<string, CacheBucket>();
 
-function cacheKey(
-  resourceId: string,
-  locale: string,
-  query: string,
-  page: number,
-) {
-  return `${resourceId}|${locale}|${query}|${page}`;
+function cacheKey(resourceId: string, query: string, page: number) {
+  return `${resourceId}|${query}|${page}`;
 }
 
 function cellText(value: unknown) {
-  if (value == null) return "—";
+  if (value == null) return "-";
   if (typeof value === "boolean") return value ? "true" : "false";
   if (Array.isArray(value)) return value.join(", ");
   return String(value);
@@ -43,19 +39,18 @@ function cellText(value: unknown) {
 
 function clampCellText(value: unknown, max = 72) {
   const text = cellText(value);
-  if (text === "—" || text.length <= max) return text;
+  if (text === "-" || text.length <= max) return text;
   return `${text.slice(0, max - 1).trimEnd()}…`;
 }
 
 async function resolveRelations(
   fields: PreviewField[],
-  locale: "en" | "fa",
 ): Promise<Record<string, unknown>> {
   const out: Record<string, unknown> = {};
   for (const field of fields) {
     if (!field.relation) continue;
     try {
-      const res = await fetch(withApiLang(field.relation.path, locale));
+      const res = await fetch(apiPath(field.relation.path));
       const payload = await res.json();
       const first = payload?.data?.[0];
       const key = field.relation.valueKey ?? "id";
@@ -115,8 +110,8 @@ export function ResourcePreviewDemo({
   resourceId: PreviewResourceId;
 }) {
   const config = previewResources[resourceId];
-  const { dict, locale } = useUiLocale();
-  const isFa = locale === "fa";
+  const { dict } = useUiLocale();
+  const catalogWritable = catalogPreviewWritable();
 
   function fieldLabel(key: string, fallback: string) {
     return dict.preview.fieldLabels[key] ?? fallback;
@@ -153,7 +148,7 @@ export function ResourcePreviewDemo({
       config.imageKey,
     ],
   );
-  const colCount = 4 + extraCols.length;
+  const colCount = 3 + extraCols.length + (catalogWritable ? 1 : 0);
   const createFields = useMemo(
     () => config.fields.filter((f) => f.create),
     [config.fields],
@@ -181,14 +176,14 @@ export function ResourcePreviewDemo({
 
   const load = useCallback(
     async (opts?: { silent?: boolean; signal?: AbortSignal }) => {
-      const key = cacheKey(config.id, locale, query.trim(), page);
+      const key = cacheKey(config.id, query.trim(), page);
       const cached = listCache.get(key);
       if (cached) {
         setRows(cached.rows);
         setPagination(cached.pagination);
         if (!opts?.silent) setLoading(false);
       } else {
-        // Drop previous-locale rows so EN/FA never flash mixed.
+        // Clear stale rows while loading a new cache key.
         if (!opts?.silent) {
           setRows([]);
           setPagination(null);
@@ -205,7 +200,7 @@ export function ResourcePreviewDemo({
           order: config.order ?? "desc",
         });
         if (query.trim()) params.set("search", query.trim());
-        const url = withApiLang(`${config.basePath}?${params}`, locale);
+        const url = apiPath(`${config.basePath}?${params}`);
         const res = await fetch(url, { signal: opts?.signal });
         const payload = await res.json();
         if (opts?.signal?.aborted) return;
@@ -232,7 +227,6 @@ export function ResourcePreviewDemo({
       config.order,
       config.sort,
       dict.preview.networkError,
-      locale,
       page,
       query,
     ],
@@ -275,15 +269,15 @@ export function ResourcePreviewDemo({
   }
 
   async function fillSample() {
-    const sample = { ...config.sample(locale) };
-    const relations = await resolveRelations(createFields, locale);
+    const sample = { ...config.sample() };
+    const relations = await resolveRelations(createFields);
     Object.assign(sample, relations);
     const next = emptyForm(config.fields);
     for (const [key, value] of Object.entries(sample)) {
       if (typeof value === "boolean") next[key] = value ? "true" : "false";
       else if (value != null) next[key] = String(value);
     }
-    // Keep tags etc. in a side channel via JSON fields if needed — posts tags
+    // Keep tags etc. in a side channel via JSON fields if needed - posts tags
     if (Array.isArray(sample.tags)) {
       (next as Record<string, string>).__tags = JSON.stringify(sample.tags);
     }
@@ -296,7 +290,7 @@ export function ResourcePreviewDemo({
     setError(null);
     try {
       const res = await fetch(
-        withApiLang(`${config.basePath}/${deleteTarget.id}`, locale),
+        apiPath(`${config.basePath}/${deleteTarget.id}`),
         { method: "DELETE" },
       );
       if (!res.ok) {
@@ -331,7 +325,7 @@ export function ResourcePreviewDemo({
 
     try {
       if (wasCreating) {
-        const res = await fetch(withApiLang(config.basePath, locale), {
+        const res = await fetch(apiPath(config.basePath), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -348,7 +342,7 @@ export function ResourcePreviewDemo({
       } else if (editing) {
         const editingId = editing.id;
         const res = await fetch(
-          withApiLang(`${config.basePath}/${editingId}`, locale),
+          apiPath(`${config.basePath}/${editingId}`),
           {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -368,7 +362,7 @@ export function ResourcePreviewDemo({
             const next = prev.map((row) =>
               row.id === editingId ? { ...row, ...updated } : row,
             );
-            const key = cacheKey(config.id, locale, query.trim(), page);
+            const key = cacheKey(config.id, query.trim(), page);
             const cached = listCache.get(key);
             if (cached) {
               listCache.set(key, { ...cached, rows: next });
@@ -394,7 +388,7 @@ export function ResourcePreviewDemo({
   const activeFields = creating ? createFields : editFields;
 
   return (
-    <div className="space-y-5" dir={isFa ? "rtl" : undefined}>
+    <div className="space-y-5" dir={"ltr"}>
       <div className="flex items-center gap-2">
         <form
           className="flex min-w-0 flex-1 items-center gap-2"
@@ -408,22 +402,24 @@ export function ResourcePreviewDemo({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={dict.preview.search}
-            className="box-border h-9 min-w-0 flex-1 rounded-md border border-border bg-muted px-3 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+            className="field-focus box-border h-9 min-w-0 flex-1 rounded-md border border-border bg-white px-3 text-[13px] text-foreground dark:bg-card"
           />
           <button
             type="submit"
-            className="box-border h-9 shrink-0 rounded-md border border-border bg-card px-3 text-[13px] font-medium hover:bg-[var(--surface-hover)]"
+            className="box-border h-9 shrink-0 rounded-md border border-primary bg-primary px-3 text-[13px] font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             {dict.preview.search}
           </button>
-          <button
-            type="button"
-            onClick={openCreate}
-            className="box-border inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md bg-[var(--request-fill)] px-3 text-[13px] font-semibold text-white"
-          >
-            <Plus className="size-3.5" aria-hidden />
-            {dict.common.new}
-          </button>
+          {catalogWritable ? (
+            <button
+              type="button"
+              onClick={openCreate}
+              className="box-border inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md bg-[var(--request-fill)] px-3 text-[13px] font-semibold text-white"
+            >
+              <Plus className="size-3.5" aria-hidden />
+              {dict.common.new}
+            </button>
+          ) : null}
         </form>
       </div>
 
@@ -436,7 +432,6 @@ export function ResourcePreviewDemo({
       <div
         className={cn(
           "overflow-hidden rounded-xl border border-border bg-card",
-          isFa && "font-fa-label",
         )}
       >
         <div className="overflow-x-auto">
@@ -444,9 +439,7 @@ export function ResourcePreviewDemo({
             <thead
               className={cn(
                 "border-b border-border bg-muted text-[11px] text-muted-foreground",
-                isFa
-                  ? "font-fa-label font-medium"
-                  : "font-mono tracking-wide uppercase",
+                "font-mono tracking-wide uppercase",
               )}
             >
               <tr>
@@ -465,9 +458,11 @@ export function ResourcePreviewDemo({
                 <th className="min-w-[7.5rem] px-3 py-2.5 text-start font-medium whitespace-nowrap">
                   {dict.preview.createdAt}
                 </th>
-                <th className="w-24 px-3 py-2.5 text-end font-medium">
-                  {dict.common.actions}
-                </th>
+                {catalogWritable ? (
+                  <th className="w-24 px-3 py-2.5 text-end font-medium">
+                    {dict.common.actions}
+                  </th>
+                ) : null}
               </tr>
             </thead>
             <tbody>
@@ -500,8 +495,8 @@ export function ResourcePreviewDemo({
                 const createdRaw = row.createdAt;
                 const createdLabel =
                   typeof createdRaw === "string" && createdRaw
-                    ? formatApiDate(createdRaw, locale)
-                    : "—";
+                    ? formatApiDate(createdRaw)
+                    : "-";
                 return (
                   <tr
                     key={String(row.id)}
@@ -548,32 +543,33 @@ export function ResourcePreviewDemo({
                     <td
                       className={cn(
                         "px-3 py-3 align-middle text-start text-[12px] whitespace-nowrap text-muted-foreground",
-                        isFa && "font-fa-label",
                       )}
-                      dir={isFa ? "rtl" : "ltr"}
+                      dir={"ltr"}
                     >
                       {createdLabel}
                     </td>
-                    <td className="px-3 py-3 align-middle">
-                      <div className="flex justify-end gap-1">
-                        <button
-                          type="button"
-                          onClick={() => openEdit(row)}
-                          className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-[var(--surface-hover)] hover:text-foreground"
-                          aria-label={dict.preview.edit}
-                        >
-                          <Pencil className="size-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setDeleteTarget(row)}
-                          className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-[var(--delete)]/10 hover:text-[var(--delete)]"
-                          aria-label={dict.preview.delete}
-                        >
-                          <Trash2 className="size-3.5" />
-                        </button>
-                      </div>
-                    </td>
+                    {catalogWritable ? (
+                      <td className="px-3 py-3 align-middle">
+                        <div className="flex justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => openEdit(row)}
+                            className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-[var(--surface-hover)] hover:text-foreground"
+                            aria-label={dict.preview.edit}
+                          >
+                            <Pencil className="size-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteTarget(row)}
+                            className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-[var(--delete)]/10 hover:text-[var(--delete)]"
+                            aria-label={dict.preview.delete}
+                          >
+                            <Trash2 className="size-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    ) : null}
                   </tr>
                 );
               })}
@@ -584,7 +580,7 @@ export function ResourcePreviewDemo({
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2.5">
           <p className="font-mono text-[11px] text-muted-foreground">
             {pagination
-              ? `${pagination.total} · GET ${config.basePath}${isFa ? "?lang=fa" : ""}`
+              ? `${pagination.total} · GET ${config.basePath}`
               : null}
           </p>
           {totalPages > 1 ? (
@@ -609,13 +605,12 @@ export function ResourcePreviewDemo({
         </div>
       </div>
 
-      {panelOpen ? (
+      {catalogWritable && panelOpen ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center">
           <form
             onSubmit={onSave}
             className={cn(
               "max-h-[90vh] w-full max-w-md space-y-4 overflow-y-auto rounded-xl border border-border bg-card p-5 shadow-lg",
-              isFa && "font-fa-label",
             )}
           >
             <div className="flex items-center justify-between gap-2">
@@ -659,7 +654,7 @@ export function ResourcePreviewDemo({
                         setForm((f) => ({ ...f, [field.key]: e.target.value }))
                       }
                       rows={3}
-                      className="w-full resize-none rounded-md border border-border bg-muted px-3 py-2 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                      className="field-focus w-full resize-none rounded-md border border-border bg-muted px-3 py-2 text-[13px]"
                     />
                   ) : field.type === "boolean" ? (
                     <select
@@ -667,7 +662,7 @@ export function ResourcePreviewDemo({
                       onChange={(e) =>
                         setForm((f) => ({ ...f, [field.key]: e.target.value }))
                       }
-                      className="h-9 w-full rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none"
+                      className="field-focus h-9 w-full rounded-md border border-border bg-muted px-2.5 text-[13px]"
                     >
                       <option value="false">false</option>
                       <option value="true">true</option>
@@ -678,7 +673,7 @@ export function ResourcePreviewDemo({
                       onChange={(e) =>
                         setForm((f) => ({ ...f, [field.key]: e.target.value }))
                       }
-                      className="h-9 w-full rounded-md border border-border bg-muted px-2.5 text-[13px] outline-none"
+                      className="field-focus h-9 w-full rounded-md border border-border bg-muted px-2.5 text-[13px]"
                     >
                       {field.options?.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -696,7 +691,7 @@ export function ResourcePreviewDemo({
                       onChange={(e) =>
                         setForm((f) => ({ ...f, [field.key]: e.target.value }))
                       }
-                      className="h-9 w-full rounded-md border border-border bg-muted px-3 text-[13px] outline-none focus-visible:border-[var(--request)]/50"
+                      className="field-focus h-9 w-full rounded-md border border-border bg-muted px-3 text-[13px]"
                     />
                   )}
                 </label>
@@ -729,13 +724,12 @@ export function ResourcePreviewDemo({
         </div>
       ) : null}
 
-      {deleteTarget ? (
+      {catalogWritable && deleteTarget ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center">
           <div
             role="alertdialog"
             className={cn(
               "w-full max-w-sm space-y-4 rounded-xl border border-border bg-card p-5 shadow-lg",
-              isFa && "font-fa-label",
             )}
           >
             <div className="space-y-1.5">

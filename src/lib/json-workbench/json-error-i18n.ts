@@ -94,7 +94,7 @@ export function translateJsonParseReason(
     return copy.unexpectedToken.replace("{token}", "?");
   }
 
-  // Already localized / unknown — show cleaned reason
+  // Already localized / unknown - show cleaned reason
   return reason;
 }
 

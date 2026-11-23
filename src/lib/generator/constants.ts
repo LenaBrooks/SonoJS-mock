@@ -1,4 +1,4 @@
-import type { GeneratorCountryCode } from "@/lib/generator/locales/types";
+import type { GeneratorCountryCode } from "@/lib/generator/locale-pack";
 
 export const GENERATOR_MAX_RECORDS = 1000;
 export const GENERATOR_QTY_PRESETS = [10, 50, 100, 500, 1000] as const;

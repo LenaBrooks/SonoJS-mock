@@ -21,7 +21,6 @@ type Mode = "pick" | "omit";
 export function PickOmitTool({ mode }: { mode: Mode }) {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
   const { source, parsed } = useWorkbench();
   const outputId = useId();
   const [selected, setSelected] = useState<string[]>([]);
@@ -72,7 +71,6 @@ export function PickOmitTool({ mode }: { mode: Mode }) {
             <span
               className={cn(
                 "text-[12px] font-medium text-muted-foreground",
-                isFa && "font-fa-label",
               )}
             >
               {t.utilities.fieldsLabel}
@@ -81,14 +79,12 @@ export function PickOmitTool({ mode }: { mode: Mode }) {
               <WorkbenchChipButton
                 onClick={() => setSelected(available)}
                 disabled={selected.length === available.length}
-                className={cn(isFa && "font-fa-label")}
               >
                 {t.utilities.fieldsSelectAll}
               </WorkbenchChipButton>
               <WorkbenchChipButton
                 onClick={() => setSelected([])}
                 disabled={selected.length === 0}
-                className={cn(isFa && "font-fa-label")}
               >
                 {t.utilities.fieldsClear}
               </WorkbenchChipButton>

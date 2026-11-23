@@ -9,21 +9,18 @@ export function FieldSelector({
   onToggle,
   fieldLabels,
   legend,
-  isFa,
 }: {
   fields: GeneratorFieldDef[];
   selected: Set<string>;
   onToggle: (id: string) => void;
   fieldLabels: Record<string, string>;
   legend: string;
-  isFa: boolean;
 }) {
   return (
     <fieldset>
       <legend
         className={cn(
           "mb-2.5 text-[13px] font-medium text-foreground",
-          isFa && "font-fa-label",
         )}
       >
         {legend}
@@ -42,7 +39,6 @@ export function FieldSelector({
                 checked
                   ? "border-[var(--request)]/45 bg-[var(--request)]/15 text-foreground"
                   : "border-border text-muted-foreground hover:border-foreground/25 hover:text-foreground",
-                isFa && "font-fa-label",
               )}
             >
               {fieldLabels[field.id] ?? field.id}

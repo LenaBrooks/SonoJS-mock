@@ -30,11 +30,6 @@ export function VsCodeBlock({
       )}
     >
       <div className="flex items-center gap-3 border-b border-[var(--vscode-border)] bg-[var(--vscode-bg-elevated)] px-3 py-2">
-        <div className="flex items-center gap-1.5" aria-hidden>
-          <span className="size-2.5 rounded-full bg-[#ff5f56]" />
-          <span className="size-2.5 rounded-full bg-[#ffbd2e]" />
-          <span className="size-2.5 rounded-full bg-[#27c93f]" />
-        </div>
         {filename ? (
           <div className="min-w-0 flex-1">
             <span className="inline-flex max-w-full truncate rounded-t border border-b-0 border-[var(--vscode-border)] bg-[var(--vscode-bg)] px-3 py-1 font-mono text-[11px] text-[var(--vscode-fg)]">

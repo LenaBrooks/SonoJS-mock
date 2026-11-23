@@ -6,18 +6,12 @@ import {
   type LocaleResource,
   type ApiLocale,
 } from "@/lib/api/locale";
-import { FA_API_FONT } from "@/lib/api/locale-constants";
 
 export type PaginationMeta = {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
-};
-
-export type ApiFontMeta = {
-  family: string;
-  cssUrl: string;
 };
 
 export function jsonSuccess<T>(
@@ -31,25 +25,16 @@ export function jsonSuccess<T>(
   const body: {
     data: T;
     pagination?: PaginationMeta;
-    font?: ApiFontMeta;
   } = { data };
   if (init?.pagination) {
     body.pagination = init.pagination;
   }
-  if (init?.locale === "fa") {
-    body.font = { ...FA_API_FONT };
-  }
-  const headers = new Headers();
-  if (init?.locale) {
-    headers.set("Content-Language", init.locale);
-  }
   return NextResponse.json(body, {
     status: init?.status ?? 200,
-    headers,
   });
 }
 
-/** Localize entity payload when ?lang=fa is present. */
+/** JSON success with optional Content-Language header (English-only API). */
 export function jsonLocalizedSuccess<T>(
   request: Request,
   resource: LocaleResource,
@@ -58,7 +43,7 @@ export function jsonLocalizedSuccess<T>(
 ) {
   const locale = resolveApiLocale(request);
   const localized = localizePayload(resource, data, locale) as T;
-  return jsonSuccess(localized, { ...init, locale });
+  return jsonSuccess(localized, init);
 }
 
 export function jsonError(

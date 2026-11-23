@@ -3,7 +3,7 @@ import { DEFAULT_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/seo";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    name: `${SITE_NAME} - ${SITE_TAGLINE}`,
     short_name: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
     start_url: "/",
@@ -14,7 +14,7 @@ export default function manifest(): MetadataRoute.Manifest {
       {
         src: "/favicon.svg",
         sizes: "any",
-        type: "image/png",
+      type: "image/svg+xml",
       },
     ],
   };

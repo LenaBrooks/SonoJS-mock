@@ -23,7 +23,7 @@ import { seedProducts } from "./seed-products";
 import { seedTodos } from "./seed-todos";
 import { seedUsers } from "./seed-users";
 
-/** Wipe and re-insert seed data. Used by CLI and admin reset. */
+/** Wipe and re-insert seed data. Used by `npm run db:seed` only. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function runSeed(database: any) {
   console.log("Clearing seed tables...");

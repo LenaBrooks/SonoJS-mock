@@ -488,7 +488,7 @@ function normalizeInput(text: string): string {
   // Leading prose before first { or [
   const startObj = s.search(/[{[]/);
   if (startObj > 0 && /[A-Za-z\u0600-\u06FF]/.test(s.slice(0, startObj))) {
-    // keep — extractLikelyJson handles this as a variant
+    // keep - extractLikelyJson handles this as a variant
   }
   return s.trim();
 }

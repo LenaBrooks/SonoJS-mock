@@ -77,15 +77,6 @@ export const seedCountries: Omit<
     flagUrl: "https://flagcdn.com/w320/se.png",
   },
   {
-    name: "Iran",
-    code: "IR",
-    capital: "Tehran",
-    region: "Asia",
-    population: 83992949,
-    currency: "IRR",
-    flagUrl: "https://flagcdn.com/w320/ir.png",
-  },
-  {
     name: "Japan",
     code: "JP",
     capital: "Tokyo",
@@ -142,7 +133,7 @@ export const seedCountries: Omit<
   {
     name: "Brazil",
     code: "BR",
-    capital: "Brasília",
+    capital: "Brasilia",
     region: "Americas",
     population: 212559417,
     currency: "BRL",

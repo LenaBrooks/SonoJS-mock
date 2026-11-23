@@ -18,15 +18,12 @@ import { Building2, Briefcase, GraduationCap, CalendarDays, FolderKanban, UsersR
 
 const JOB_TYPES = {
   en: ["Full-time", "Part-time", "Contract", "Internship"] as const,
-  fa: ["تمام‌وقت", "پاره‌وقت", "قراردادی", "کارآموزی"] as const,
 };
 const LEVELS = {
   en: ["Beginner", "Intermediate", "Advanced"] as const,
-  fa: ["مبتدی", "متوسط", "پیشرفته"] as const,
 };
 const EVENT_CATEGORIES = {
   en: ["Conference", "Meetup", "Workshop", "Webinar"] as const,
-  fa: ["کنفرانس", "میت‌آپ", "کارگاه", "وبینار"] as const,
 };
 
 export const businessTopics: GeneratorTopic[] = [
@@ -54,11 +51,9 @@ export const businessTopics: GeneratorTopic[] = [
         name,
         logo: imageUrl(`co-${ctx.seed}-${ctx.index}`, 200, 200),
         industry: pick(rng, ctx.pack.industries),
-        location: `${loc.city}${ctx.uiLocale === "fa" ? "، " : ", "}${ctx.pack.countryName}`,
+        location: `${loc.city}, ${ctx.pack.countryName}`,
         website:
-          ctx.uiLocale === "fa"
-            ? `https://example.ir/c/${ctx.index + 1}`
-            : `https://example.com/c/${ctx.index + 1}`,
+          `https://example.com/c/${ctx.index + 1}`,
         employees: int(rng, 12, 25000),
         country: ctx.pack.countryName,
         founded: int(rng, 1985, 2022),
@@ -87,18 +82,15 @@ export const businessTopics: GeneratorTopic[] = [
       const loc = place(ctx.pack, rng);
       const record: Record<string, unknown> = {
         id: id("job", ctx.index, rng),
-        title: pick(rng, contentList("jobTitles", ctx.uiLocale)),
+        title: pick(rng, contentList("jobTitles")),
         company: pick(rng, ctx.pack.companies),
         location: `${loc.city}, ${loc.region}`,
-        type: pick(rng, JOB_TYPES[ctx.uiLocale]),
-        salary: moneyAmount(rng, ctx.uiLocale, {
-          fa: [8_000_000, 120_000_000],
+        type: pick(rng, JOB_TYPES["en"]),
+        salary: moneyAmount(rng, "en", {
           en: [40_000, 160_000],
         }),
         experience:
-          ctx.uiLocale === "fa"
-            ? `${int(rng, 1, 8)}+ سال`
-            : `${int(rng, 1, 8)}+ years`,
+          `${int(rng, 1, 8)}+ years`,
         remote: rng() > 0.45,
         country: ctx.pack.countryName,
         postedAt: isoDate(rng, 40),
@@ -125,15 +117,7 @@ export const businessTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const titles =
-        ctx.uiLocale === "fa"
-          ? [
-              "مبانی React",
-              "اصول طراحی API",
-              "الگوهای UI دسترس‌پذیر",
-              "تحلیل محصول",
-              "TypeScript عملی",
-            ]
-          : [
+        [
               "React Fundamentals",
               "API Design Essentials",
               "Accessible UI Patterns",
@@ -145,13 +129,12 @@ export const businessTopics: GeneratorTopic[] = [
         title: pick(rng, titles),
         instructor: fullName(ctx.pack, rng),
         image: imageUrl(`crs-${ctx.seed}-${ctx.index}`),
-        level: pick(rng, LEVELS[ctx.uiLocale]),
+        level: pick(rng, LEVELS["en"]),
         duration: `${int(rng, 3, 24)}h`,
         lessons: int(rng, 8, 48),
         rating: float(rng, 3.8, 5, 1),
         students: int(rng, 120, 18000),
-        price: moneyAmount(rng, ctx.uiLocale, {
-          fa: [100_000, 5_000_000],
+        price: moneyAmount(rng, "en", {
           en: [19, 199],
         }),
       };
@@ -178,14 +161,7 @@ export const businessTopics: GeneratorTopic[] = [
       const rng = createRng(ctx.seed, ctx.index);
       const loc = place(ctx.pack, rng);
       const titles =
-        ctx.uiLocale === "fa"
-          ? [
-              "میت‌آپ فرانت‌اند",
-              "روز سیستم طراحی",
-              "کارگاه API",
-              "نمایش استارتاپ‌ها",
-            ]
-          : [
+        [
               "Frontend Meetup",
               "Design Systems Day",
               "API Workshop",
@@ -199,13 +175,10 @@ export const businessTopics: GeneratorTopic[] = [
         location: `${loc.city}, ${ctx.pack.countryName}`,
         image: imageUrl(`evt-${ctx.seed}-${ctx.index}`),
         description:
-          ctx.uiLocale === "fa"
-            ? `${title} — برای سخنرانی و کارگاه همراه شو.`
-            : `${title} — join peers for talks and workshops.`,
-        category: pick(rng, EVENT_CATEGORIES[ctx.uiLocale]),
+          `${title} â€” join peers for talks and workshops.`,
+        category: pick(rng, EVENT_CATEGORIES["en"]),
         capacity: int(rng, 40, 800),
-        price: moneyAmount(rng, ctx.uiLocale, {
-          fa: [0, 2_000_000],
+        price: moneyAmount(rng, "en", {
           en: [0, 120],
         }),
         country: ctx.pack.countryName,
@@ -233,9 +206,7 @@ export const businessTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const names =
-        ctx.uiLocale === "fa"
-          ? ["بازطراحی داشبورد", "مهاجرت API", "لانچ موبایل", "سیستم اعلان", "پورتال مشتری"]
-          : [
+        [
               "Dashboard redesign",
               "API migration",
               "Mobile launch",
@@ -243,9 +214,7 @@ export const businessTopics: GeneratorTopic[] = [
               "Customer portal",
             ];
       const statuses =
-        ctx.uiLocale === "fa"
-          ? ["برنامه‌ریزی", "در حال انجام", "بازبینی", "انجام‌شده", "متوقف"]
-          : ["planning", "in_progress", "review", "done", "on_hold"];
+        ["planning", "in_progress", "review", "done", "on_hold"];
       const name = pick(rng, names);
       const record: Record<string, unknown> = {
         id: id("prj", ctx.index, rng),
@@ -254,12 +223,9 @@ export const businessTopics: GeneratorTopic[] = [
         owner: fullName(ctx.pack, rng),
         progress: int(rng, 5, 100),
         description:
-          ctx.uiLocale === "fa"
-            ? `${name} — پیگیری تحویل و هماهنگی تیم.`
-            : `${name} — track delivery and team coordination.`,
+          `${name} â€” track delivery and team coordination.`,
         teamSize: int(rng, 2, 24),
-        budget: moneyAmount(rng, ctx.uiLocale, {
-          fa: [50_000_000, 2_000_000_000],
+        budget: moneyAmount(rng, "en", {
           en: [5_000, 250_000],
         }),
         startDate: isoDate(rng, 200),
@@ -287,20 +253,16 @@ export const businessTopics: GeneratorTopic[] = [
     generateOne(ctx, fields) {
       const rng = createRng(ctx.seed, ctx.index);
       const names =
-        ctx.uiLocale === "fa"
-          ? ["تیم محصول", "تیم پلتفرم", "تیم رشد", "تیم طراحی", "تیم داده"]
-          : ["Product squad", "Platform team", "Growth crew", "Design guild", "Data team"];
+        ["Product squad", "Platform team", "Growth crew", "Design guild", "Data team"];
       const focuses =
-        ctx.uiLocale === "fa"
-          ? ["تجربه کاربری", "زیرساخت", "درآمد", "برند", "بینش"]
-          : ["UX", "Infrastructure", "Revenue", "Brand", "Insights"];
+        ["UX", "Infrastructure", "Revenue", "Brand", "Insights"];
       const loc = place(ctx.pack, rng);
       const record: Record<string, unknown> = {
         id: id("tea", ctx.index, rng),
         name: pick(rng, names),
         lead: fullName(ctx.pack, rng),
         membersCount: int(rng, 3, 28),
-        department: pick(rng, contentList("departments", ctx.uiLocale)),
+        department: pick(rng, contentList("departments")),
         company: pick(rng, ctx.pack.companies),
         location: `${loc.city}, ${ctx.pack.countryName}`,
         createdAt: isoDate(rng, 900),

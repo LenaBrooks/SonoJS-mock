@@ -27,7 +27,6 @@ export function ParseError({
 }: Props) {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench.errors;
-  const isFa = locale === "fa";
 
   const reason = translateJsonParseReason(message, t);
   const loc = formatJsonErrorLocation(t, { line, column, position });
@@ -37,10 +36,9 @@ export function ParseError({
   return (
     <p
       role="alert"
-      dir={isFa ? "rtl" : "ltr"}
+      dir={"ltr"}
       className={cn(
         "rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-[13px] text-destructive",
-        isFa && "font-fa-label",
         className,
       )}
     >

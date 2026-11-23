@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import type { LocalePack, GeneratorCountryCode } from "@/lib/generator/locales/types";
+import type { LocalePack, GeneratorCountryCode } from "@/lib/generator/locale-pack";
 
 export type GeneratorCategory =
   | "people"
@@ -11,7 +11,7 @@ export type GeneratorCategory =
 
 export type GeneratorFieldDef = {
   id: string;
-  /** Shown by default; false = behind “More fields”. */
+  /** Shown by default; false = behind â€œMore fieldsâ€. */
   default: boolean;
 };
 
@@ -21,7 +21,7 @@ export type GenerateContext = {
   country: GeneratorCountryCode | "all";
   pack: LocalePack;
   /** UI locale for labels that should follow site language when country is all. */
-  uiLocale: "en" | "fa";
+  uiLocale: "en";
 };
 
 export type GeneratorTopicId =

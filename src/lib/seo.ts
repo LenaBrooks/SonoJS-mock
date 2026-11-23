@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import type { ApiResource } from "@/lib/catalog";
-import type { UiLocale } from "@/lib/i18n/constants";
+import type { UiLocale } from "@/lib/locale/constants";
 
 export const SITE_URL = "https://mock.sonojs.com";
-export const SITE_NAME = "MockData";
-export const SITE_TAGLINE = "Free Fake REST API";
+export const SITE_NAME = "SonoJS Mock";
+export const SITE_TAGLINE = "Free fake REST API";
 
 export const DEFAULT_DESCRIPTION =
   "Free fake REST APIs with live JSON for frontend development. Seeded resources, Temporary API, Fake Data Generator, Image Generator, JSON Workbench, auth, docs, and an in-browser playground.";
@@ -24,18 +24,14 @@ export function absoluteUrl(path = "/"): string {
   return `${SITE_URL}${normalized === "/" ? "" : normalized}`;
 }
 
-function ogLocale(locale: UiLocale): string {
-  return locale === "fa" ? "fa_IR" : "en_US";
+function ogLocale(_locale: UiLocale): string {
+  return "en_US";
 }
 
-function alternateOgLocale(locale: UiLocale): string {
-  return locale === "fa" ? "en_US" : "fa_IR";
+function alternateOgLocale(_locale: UiLocale): string | undefined {
+  return undefined;
 }
 
-/**
- * Language-neutral Blog URLs: same canonical for EN/FA, with hreflang
- * pointing both locales (and x-default) at that URL.
- */
 function blogLanguageAlternates(
   url: string,
 ): NonNullable<Metadata["alternates"]> {
@@ -43,7 +39,6 @@ function blogLanguageAlternates(
     canonical: url,
     languages: {
       en: url,
-      fa: url,
       "x-default": url,
     },
   };
@@ -111,7 +106,9 @@ export function createBlogListingMetadata({
       siteName: SITE_NAME,
       type: "website",
       locale: ogLocale(locale),
-      alternateLocale: [alternateOgLocale(locale)],
+      ...(alternateOgLocale(locale)
+        ? { alternateLocale: [alternateOgLocale(locale)!] }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",
@@ -158,7 +155,9 @@ export function createBlogArticleMetadata({
       type: "article",
       publishedTime: published,
       locale: ogLocale(locale),
-      alternateLocale: [alternateOgLocale(locale)],
+      ...(alternateOgLocale(locale)
+        ? { alternateLocale: [alternateOgLocale(locale)!] }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",
@@ -173,7 +172,7 @@ export function createBlogArticleMetadata({
 
 export function createResourceMetadata(resource: ApiResource): Metadata {
   const title = `${resource.title} API`;
-  const description = `${resource.summary} Live JSON at ${resource.basePath} — try it in the MockData playground.`;
+  const description = `${resource.summary} Live JSON at ${resource.basePath} - try it in the SonoJS Mock playground.`;
 
   return createPageMetadata({
     title,
@@ -214,7 +213,7 @@ export function blogPostingJsonLd(input: {
     headline: input.title,
     description: input.description,
     datePublished,
-    inLanguage: input.locale === "fa" ? "fa-IR" : "en-US",
+    inLanguage: "en-US",
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": absoluteUrl(input.path),
@@ -267,6 +266,6 @@ export function organizationJsonLd(): Record<string, unknown> {
     "@type": "Organization",
     name: SITE_NAME,
     url: SITE_URL,
-    email: "info@mockdata.ir",
+    email: "hello@sonojs.com",
   };
 }

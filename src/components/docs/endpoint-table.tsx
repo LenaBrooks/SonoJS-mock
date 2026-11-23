@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { CopyButton } from "@/components/docs/copy-button";
 import { MethodBadges } from "@/components/docs/method-badges";
-import { useApiLocale, withApiLang } from "@/lib/api/use-api-locale";
+import { apiPath } from "@/lib/api/use-api-locale";
 
 type EndpointRow = {
   methods: string;
@@ -12,13 +12,11 @@ type EndpointRow = {
 };
 
 export function EndpointTable({ rows }: { rows: EndpointRow[] }) {
-  const locale = useApiLocale();
-
   return (
     <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
       {rows.map((row) => {
         const linkable = !row.path.includes(":id");
-        const href = withApiLang(row.path, locale);
+        const href = apiPath(row.path);
         return (
           <li
             key={`${row.methods}-${row.path}`}

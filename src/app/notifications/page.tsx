@@ -14,7 +14,7 @@ const listResponse = `{
     {
       "id": "c9d0e1f2-a3b4-5678-c345-789012345678",
       "userId": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-      "title": "Welcome to MockData",
+      "title": "Welcome to SonoJS Mock",
       "message": "Your workspace seed data is ready to explore.",
       "type": "success",
       "read": false,

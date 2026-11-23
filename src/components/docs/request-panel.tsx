@@ -65,7 +65,7 @@ export function RequestPanel({ examples }: RequestPanelProps) {
                   onClick={() => setLang(item)}
                   className={cn(
                     "rounded px-2.5 py-1 font-mono text-[10px] transition-colors",
-                    /* Always on dark vscode chrome — use amber, not theme --request */
+                    /* Always on dark vscode chrome - use amber, not theme --request */
                     lang === item
                       ? "bg-[#ffb020]/20 text-[#ffb020]"
                       : "text-[#d4d4d4]/70 hover:text-[#ffb020]",

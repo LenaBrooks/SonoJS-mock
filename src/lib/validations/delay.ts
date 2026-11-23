@@ -1,4 +1,4 @@
-/** Re-exports — prefer `@/lib/validations/mock-controls`. */
+/** Re-exports - prefer `@/lib/validations/mock-controls`. */
 export {
   delaySchema,
   statusSchema,

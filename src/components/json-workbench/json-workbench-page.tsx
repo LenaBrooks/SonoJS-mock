@@ -35,7 +35,7 @@ import type { TreeExpandMode } from "./tools/json-tree";
 
 type FormatMode = "format" | "minify";
 
-const TOOL_CHANGE_EVENT = "mockdata-workbench-tool";
+const TOOL_CHANGE_EVENT = "sonojs-mock-workbench-tool";
 
 function readToolFromUrl(): ToolId {
   if (typeof window === "undefined") return DEFAULT_TOOL_ID;
@@ -110,7 +110,6 @@ function ActiveWorkspace({
 function WorkbenchShell() {
   const { dict, locale } = useUiLocale();
   const t = dict.jsonWorkbench;
-  const isFa = locale === "fa";
 
   const activeId = useSyncExternalStore(
     subscribeToolUrl,
@@ -168,7 +167,6 @@ function WorkbenchShell() {
         <h1
           className={cn(
             "inline-flex min-w-0 items-center gap-2.5 text-2xl font-semibold tracking-[-0.03em] text-foreground sm:text-[1.75rem]",
-            isFa && "font-fa-label",
           )}
         >
           {isCompare ? (
@@ -180,7 +178,7 @@ function WorkbenchShell() {
               className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               <ArrowLeft
-                className={cn("size-5 sm:size-6", isFa && "rotate-180")}
+                className={cn("size-5 sm:size-6")}
                 strokeWidth={1.75}
                 aria-hidden
               />
@@ -193,7 +191,7 @@ function WorkbenchShell() {
               className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               <ArrowLeft
-                className={cn("size-5 sm:size-6", isFa && "rotate-180")}
+                className={cn("size-5 sm:size-6")}
                 strokeWidth={1.75}
                 aria-hidden
               />
@@ -204,7 +202,6 @@ function WorkbenchShell() {
             <span
               className={cn(
                 "inline-flex shrink-0 items-center rounded-md bg-[var(--request-fill)]/15 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--request)]",
-                isFa && "font-fa-label",
               )}
             >
               {dict.common.inDevelopment}
@@ -214,7 +211,6 @@ function WorkbenchShell() {
         <p
           className={cn(
             "max-w-2xl text-[14px] leading-relaxed text-muted-foreground",
-            isFa && "font-fa-label",
           )}
         >
           {headerBlurb}
@@ -249,7 +245,6 @@ function WorkbenchShell() {
                 <h2
                   className={cn(
                     "shrink-0 text-[14px] font-semibold text-foreground",
-                    isFa && "font-fa-label",
                   )}
                 >
                   {workspaceLabel}

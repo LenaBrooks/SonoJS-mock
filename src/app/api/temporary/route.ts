@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
         if (setCookie) appendTmpClientCookie(response, clientKey);
         return response;
       } catch (err) {
-        // Unique violation on public_id — retry with new id
+        // Unique violation on public_id - retry with new id
         const message = err instanceof Error ? err.message : String(err);
         if (message.includes("temporary_apis_public_id") || message.includes("unique")) {
           publicId = generatePublicId();

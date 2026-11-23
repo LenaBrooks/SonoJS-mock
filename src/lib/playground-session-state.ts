@@ -1,4 +1,3 @@
-import type { ApiLocale } from "@/lib/api/locale-constants";
 import type { PlaygroundResourceId } from "@/lib/playground";
 
 export type PlaygroundHttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
@@ -16,10 +15,9 @@ export type PlaygroundResponseSnap = {
   status: number | null;
   ms: number | null;
   lastUrl: string | null;
-  isFa: boolean;
 };
 
-/** Per-resource request UI — restored when switching back to a resource. */
+/** Per-resource request UI - restored when switching back to a resource. */
 export type PlaygroundResourceUiSnap = {
   action: PlaygroundActionId;
   method: PlaygroundHttpMethod;
@@ -32,7 +30,6 @@ export type PlaygroundResourceUiSnap = {
   limit: number;
   search: string;
   role: string;
-  countryFilter: string;
   sort: string;
   order: "asc" | "desc" | "";
 };
@@ -60,10 +57,8 @@ export type PlaygroundSessionState = {
   limit: number;
   search: string;
   role: string;
-  countryFilter: string;
   sort: string;
   order: "asc" | "desc" | "";
-  queryLang: "en" | "fa";
   responseView: "json" | "types";
   token: string;
   tokenEditable: boolean;
@@ -74,7 +69,6 @@ export type PlaygroundSessionState = {
     Record<PlaygroundResourceId, PlaygroundResourceUiSnap>
   >;
   error: string | null;
-  apiLocale: ApiLocale;
 };
 
 const EMPTY_RESPONSE: PlaygroundResponseSnap = {
@@ -82,7 +76,6 @@ const EMPTY_RESPONSE: PlaygroundResponseSnap = {
   status: null,
   ms: null,
   lastUrl: null,
-  isFa: false,
 };
 
 function defaultPath(resource: PlaygroundResourceId): string {
@@ -109,7 +102,6 @@ export function defaultResourceUi(
     limit: 12,
     search: "",
     role: "",
-    countryFilter: "",
     sort: "",
     order: "",
   };
@@ -138,20 +130,17 @@ const DEFAULT_STATE: PlaygroundSessionState = {
   limit: 12,
   search: "",
   role: "",
-  countryFilter: "",
   sort: "",
   order: "",
-  queryLang: "en",
   responseView: "json",
   token: "",
   tokenEditable: false,
   responsesByResource: {},
   uiByResource: {},
   error: null,
-  apiLocale: "en",
 };
 
-/** In-memory session — survives client navigations, clears on full reload. */
+/** In-memory session - survives client navigations, clears on full reload. */
 let session: PlaygroundSessionState = { ...DEFAULT_STATE };
 let seeded = false;
 

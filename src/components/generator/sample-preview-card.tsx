@@ -2,7 +2,7 @@
 
 import { useMemo, type ReactNode } from "react";
 import { Star } from "lucide-react";
-import { resolveLocalePack } from "@/lib/generator/locales";
+import { resolveLocalePack } from "@/lib/generator/locale-pack";
 import { getGeneratorTopic } from "@/lib/generator/registry";
 import type { GeneratorTopicId } from "@/lib/generator/types";
 import { cn } from "@/lib/utils";
@@ -43,14 +43,10 @@ const LTR_KEYS = new Set([
   "date",
 ]);
 
-function toFaDigits(value: string): string {
-  return value.replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]!);
-}
-
-function formatValue(value: unknown, isFa: boolean, fieldId?: string): string {
-  if (value === null || value === undefined) return "—";
+function formatValue(value: unknown, fieldId?: string): string {
+  if (value === null || value === undefined) return "-";
   if (typeof value === "boolean") {
-    return isFa ? (value ? "بله" : "خیر") : value ? "true" : "false";
+    return value ? "true" : "false";
   }
   if (typeof value === "number") {
     // Years stay without separators; money/counts get locale separators in the card only.
@@ -60,15 +56,11 @@ function formatValue(value: unknown, isFa: boolean, fieldId?: string): string {
       fieldId === "age" ||
       fieldId === "enrollmentYear"
     ) {
-      const raw = String(value);
-      return isFa ? toFaDigits(raw) : raw;
+      return String(value);
     }
-    return value.toLocaleString(isFa ? "fa-IR" : "en-US");
+    return value.toLocaleString("en-US");
   }
   if (typeof value === "string") {
-    if (fieldId === "id" && isFa && /^\d+$/.test(value)) {
-      return toFaDigits(value);
-    }
     return value;
   }
   if (Array.isArray(value)) {
@@ -82,14 +74,14 @@ function formatValue(value: unknown, isFa: boolean, fieldId?: string): string {
         .map((raw) => {
           const it = raw as Record<string, unknown>;
           const qty = it.quantity ?? 1;
-          const name = it.name ?? "—";
+          const name = it.name ?? "-";
           const qtyText =
             typeof qty === "number"
-              ? qty.toLocaleString(isFa ? "fa-IR" : "en-US")
+              ? qty.toLocaleString("en-US")
               : String(qty);
           return `${qtyText} × ${name}`;
         })
-        .join(isFa ? "، " : ", ");
+        .join(", ");
     }
     return value
       .map((v) =>
@@ -103,7 +95,7 @@ function formatValue(value: unknown, isFa: boolean, fieldId?: string): string {
       const parts = [o.street, o.city, o.region, o.country, o.postalCode]
         .filter((p) => p !== undefined && p !== null && String(p).length > 0)
         .map(String);
-      if (parts.length > 0) return parts.join(isFa ? "، " : ", ");
+      if (parts.length > 0) return parts.join(", ");
     }
     return Object.entries(value as Record<string, unknown>)
       .map(([k, v]) => `${k}: ${typeof v === "object" ? JSON.stringify(v) : String(v)}`)
@@ -154,22 +146,19 @@ export function SamplePreviewCard({
   selectedFields,
   fieldLabels,
   fieldOrder,
-  isFa,
 }: {
   topicId: GeneratorTopicId;
   topicName: string;
   selectedFields: ReadonlySet<string>;
   fieldLabels: Record<string, string>;
   fieldOrder: string[];
-  isFa: boolean;
 }) {
   const sample = useMemo(() => {
     const topic = getGeneratorTopic(topicId);
     if (!topic || selectedFields.size === 0) return null;
-    const uiLocale = isFa ? ("fa" as const) : ("en" as const);
-    const country = isFa ? ("IR" as const) : ("all" as const);
-    // FA UI always uses Persian-script Iran pack — never Latin "Ali Ahmadi" / foreign packs.
-    const pack = resolveLocalePack(country, 0, uiLocale);
+    const uiLocale = "en" as const;
+    const country = "all" as const;
+    const pack = resolveLocalePack(country, 0);
     return topic.generateOne(
       {
         index: 0,
@@ -180,7 +169,7 @@ export function SamplePreviewCard({
       },
       selectedFields,
     );
-  }, [topicId, selectedFields, isFa]);
+  }, [topicId, selectedFields]);
 
   if (!sample) return null;
 
@@ -207,7 +196,7 @@ export function SamplePreviewCard({
     "user",
     "sender",
   ]);
-  // Bold header only beside avatar/flag — everything else is a flat label/value list.
+  // Bold header only beside avatar/flag - everything else is a flat label/value list.
   const headerKey =
     isAvatar || isFlag
       ? textKeys.find((k) => HEADER_KEYS.has(k)) ??
@@ -223,7 +212,6 @@ export function SamplePreviewCard({
       <p
         className={cn(
           "text-[12px] text-muted-foreground",
-          isFa && "font-fa-label",
         )}
       >
         {topicName}
@@ -231,7 +219,6 @@ export function SamplePreviewCard({
       <article
         className={cn(
           "overflow-hidden rounded-xl border border-border bg-card",
-          isFa && "font-fa-label",
         )}
       >
         <div
@@ -265,33 +252,30 @@ export function SamplePreviewCard({
                 />
                 {headerKey && sample[headerKey] !== undefined ? (
                   <p className="min-w-0 truncate text-[15px] font-semibold tracking-tight text-foreground">
-                    {formatValue(sample[headerKey], isFa, headerKey)}
+                    {formatValue(sample[headerKey], headerKey)}
                   </p>
                 ) : null}
               </div>
             ) : headerKey && sample[headerKey] !== undefined ? (
               <p className="mb-3 text-[15px] font-semibold tracking-tight text-foreground">
-                {formatValue(sample[headerKey], isFa, headerKey)}
+                {formatValue(sample[headerKey], headerKey)}
               </p>
             ) : null}
 
             <dl
               className={cn(
                 "grid gap-x-3 gap-y-2.5",
-                isFa
-                  ? "grid-cols-[5.5rem_minmax(0,1fr)] sm:grid-cols-[6.5rem_minmax(0,1fr)]"
-                  : "grid-cols-[6.5rem_minmax(0,1fr)] sm:grid-cols-[7.25rem_minmax(0,1fr)]",
+                "grid-cols-[6.5rem_minmax(0,1fr)] sm:grid-cols-[7.25rem_minmax(0,1fr)]",
               )}
-              dir={isFa ? "rtl" : "ltr"}
+              dir={"ltr"}
             >
               {detailKeys.map((key) => (
                 <FieldLine
                   key={key}
                   label={fieldLabels[key] ?? key}
-                  value={formatValue(sample[key], isFa, key)}
+                  value={formatValue(sample[key], key)}
                   fieldId={key}
                   rawValue={sample[key]}
-                  isFa={isFa}
                 />
               ))}
             </dl>
@@ -307,17 +291,15 @@ function FieldLine({
   value,
   fieldId,
   rawValue,
-  isFa,
   emphasize,
 }: {
   label: string;
   value: string;
   fieldId: string;
   rawValue?: unknown;
-  isFa: boolean;
   emphasize?: boolean;
 }) {
-  const forceLtr = LTR_KEYS.has(fieldId) && !looksPersian(value);
+  const forceLtr = LTR_KEYS.has(fieldId) && !looksEnglish(value);
   const longText =
     fieldId === "bio" ||
     fieldId === "body" ||
@@ -341,7 +323,6 @@ function FieldLine({
       <dd
         className={cn(
           "text-[15px] font-semibold tracking-tight text-foreground",
-          isFa && "font-fa-label",
         )}
       >
         {display}
@@ -354,7 +335,6 @@ function FieldLine({
       <dt
         className={cn(
           "pt-0.5 text-[11px] leading-5 text-muted-foreground",
-          isFa && "font-fa-label",
         )}
       >
         {label}
@@ -363,7 +343,6 @@ function FieldLine({
         className={cn(
           "min-w-0 text-[13px] leading-5 text-foreground",
           longText && "whitespace-pre-wrap break-words",
-          isFa && fieldId !== "rating" && "font-fa-label",
         )}
       >
         {display}
@@ -372,6 +351,6 @@ function FieldLine({
   );
 }
 
-function looksPersian(text: string): boolean {
+function looksEnglish(text: string): boolean {
   return /[\u0600-\u06FF]/.test(text);
 }
