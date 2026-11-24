@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pencil, Plus, Sparkles, Trash2, X } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   previewResources,
   type PreviewField,
@@ -28,6 +29,120 @@ const listCache = new Map<string, CacheBucket>();
 
 function cacheKey(resourceId: string, query: string, page: number) {
   return `${resourceId}|${query}|${page}`;
+}
+
+const PREVIEW_PAGE_LIMIT = 12;
+
+type PreviewConfig = (typeof previewResources)[PreviewResourceId];
+
+async function fetchListPage(
+  config: PreviewConfig,
+  query: string,
+  page: number,
+  signal?: AbortSignal,
+): Promise<{ bucket: CacheBucket } | { message: string }> {
+  const params = new URLSearchParams({
+    limit: String(PREVIEW_PAGE_LIMIT),
+    page: String(page),
+    sort: config.sort ?? "createdAt",
+    order: config.order ?? "desc",
+  });
+  if (query.trim()) params.set("search", query.trim());
+  const url = apiPath(`${config.basePath}?${params}`);
+  const res = await fetch(url, { signal });
+  const payload = await res.json();
+  if (!res.ok) {
+    return { message: payload?.error?.message ?? "Failed to load" };
+  }
+  return {
+    bucket: {
+      rows: (payload.data ?? []) as Row[],
+      pagination: payload.pagination as Pagination,
+    },
+  };
+}
+
+function previewSkeletonClassName(className?: string) {
+  return cn(
+    "bg-muted/60 motion-safe:animate-[pulse_1.5s_ease-in-out_infinite]",
+    className,
+  );
+}
+
+function PreviewTableSkeleton({
+  rowCount,
+  colCount,
+  extraCols,
+  showImage,
+  showActions,
+}: {
+  rowCount: number;
+  colCount: number;
+  extraCols: PreviewField[];
+  showImage: boolean;
+  showActions: boolean;
+}) {
+  return (
+    <>
+      {Array.from({ length: rowCount }, (_, index) => (
+        <tr
+          key={`sk-${index}`}
+          className="border-b border-border/70 last:border-0"
+          aria-hidden
+        >
+          <td className="px-3 py-3 align-middle">
+            <Skeleton className={previewSkeletonClassName("h-3 w-5")} />
+          </td>
+          <td className="px-3 py-3 align-middle">
+            <div className="flex items-center gap-3">
+              {showImage ? (
+                <Skeleton
+                  className={previewSkeletonClassName(
+                    "size-9 shrink-0 rounded-full",
+                  )}
+                />
+              ) : null}
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <Skeleton
+                  className={previewSkeletonClassName(
+                    cn("h-3.5 max-w-[9rem]", index % 3 === 0 && "max-w-[7rem]"),
+                  )}
+                />
+                <Skeleton
+                  className={previewSkeletonClassName(
+                    cn("h-2.5 max-w-[11rem]", index % 2 === 0 && "max-w-[8rem]"),
+                  )}
+                />
+              </div>
+            </div>
+          </td>
+          {extraCols.map((field) => (
+            <td key={field.key} className="px-3 py-3 align-middle">
+              <Skeleton
+                className={previewSkeletonClassName(
+                  cn(
+                    "h-3 max-w-[5rem]",
+                    index % 2 === 1 && "max-w-[4rem]",
+                  ),
+                )}
+              />
+            </td>
+          ))}
+          <td className="px-3 py-3 align-middle">
+            <Skeleton className={previewSkeletonClassName("h-3 w-[4.5rem]")} />
+          </td>
+          {showActions ? (
+            <td className="px-3 py-3 align-middle">
+              <div className="flex justify-end gap-1">
+                <Skeleton className={previewSkeletonClassName("size-8 rounded-md")} />
+                <Skeleton className={previewSkeletonClassName("size-8 rounded-md")} />
+              </div>
+            </td>
+          ) : null}
+        </tr>
+      ))}
+    </>
+  );
 }
 
 function cellText(value: unknown) {
@@ -164,7 +279,9 @@ export function ResourcePreviewDemo({
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [pageFetching, setPageFetching] = useState(false);
+  const loadedQueryRef = useRef<string | null>(null);
   const [editing, setEditing] = useState<Row | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<Record<string, string>>(() =>
@@ -174,63 +291,104 @@ export function ResourcePreviewDemo({
   const [deleting, setDeleting] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  const prefetchPage = useCallback(
+    (targetPage: number, signal?: AbortSignal) => {
+      const trimmed = query.trim();
+      const key = cacheKey(config.id, trimmed, targetPage);
+      if (listCache.has(key)) return;
+      void fetchListPage(config, trimmed, targetPage, signal)
+        .then((result) => {
+          if ("bucket" in result && result.bucket) {
+            listCache.set(key, result.bucket);
+          }
+        })
+        .catch(() => {
+          /* ignore background prefetch */
+        });
+    },
+    [config, query],
+  );
+
+  const warmAdjacentPages = useCallback(
+    (current: Pagination, signal?: AbortSignal) => {
+      if (current.page > 1) prefetchPage(current.page - 1, signal);
+      if (current.page < current.totalPages) {
+        prefetchPage(current.page + 1, signal);
+      }
+    },
+    [prefetchPage],
+  );
+
   const load = useCallback(
     async (opts?: { silent?: boolean; signal?: AbortSignal }) => {
-      const key = cacheKey(config.id, query.trim(), page);
+      const trimmedQuery = query.trim();
+      const key = cacheKey(config.id, trimmedQuery, page);
       const cached = listCache.get(key);
+      const searchChanged =
+        loadedQueryRef.current !== null &&
+        loadedQueryRef.current !== trimmedQuery;
+
       if (cached) {
         setRows(cached.rows);
         setPagination(cached.pagination);
-        if (!opts?.silent) setLoading(false);
-      } else {
-        // Clear stale rows while loading a new cache key.
+        loadedQueryRef.current = trimmedQuery;
         if (!opts?.silent) {
+          setInitialLoading(false);
+          setPageFetching(false);
+        }
+        warmAdjacentPages(cached.pagination, opts?.signal);
+        return;
+      }
+
+      if (!opts?.silent) {
+        if (searchChanged || loadedQueryRef.current === null) {
           setRows([]);
           setPagination(null);
-          setLoading(true);
+          setInitialLoading(true);
+          setPageFetching(false);
+        } else {
+          setPageFetching(true);
         }
       }
 
       setError(null);
       try {
-        const params = new URLSearchParams({
-          limit: "12",
-          page: String(page),
-          sort: config.sort ?? "createdAt",
-          order: config.order ?? "desc",
-        });
-        if (query.trim()) params.set("search", query.trim());
-        const url = apiPath(`${config.basePath}?${params}`);
-        const res = await fetch(url, { signal: opts?.signal });
-        const payload = await res.json();
+        const result = await fetchListPage(
+          config,
+          trimmedQuery,
+          page,
+          opts?.signal,
+        );
         if (opts?.signal?.aborted) return;
-        if (!res.ok) {
-          setError(payload?.error?.message ?? "Failed to load");
+        if ("message" in result) {
+          setError(result.message);
           return;
         }
-        const nextRows = (payload.data ?? []) as Row[];
-        const nextPagination = payload.pagination as Pagination;
-        listCache.set(key, { rows: nextRows, pagination: nextPagination });
-        setRows(nextRows);
-        setPagination(nextPagination);
+        const { bucket } = result;
+        listCache.set(key, bucket);
+        setRows(bucket.rows);
+        setPagination(bucket.pagination);
+        loadedQueryRef.current = trimmedQuery;
+        warmAdjacentPages(bucket.pagination, opts?.signal);
       } catch (err) {
         if (opts?.signal?.aborted) return;
         if (err instanceof DOMException && err.name === "AbortError") return;
         setError(dict.preview.networkError);
       } finally {
-        if (!opts?.signal?.aborted) setLoading(false);
+        if (!opts?.signal?.aborted) {
+          setInitialLoading(false);
+          setPageFetching(false);
+        }
       }
     },
-    [
-      config.basePath,
-      config.id,
-      config.order,
-      config.sort,
-      dict.preview.networkError,
-      page,
-      query,
-    ],
+    [config, dict.preview.networkError, page, query, warmAdjacentPages],
   );
+
+  useEffect(() => {
+    loadedQueryRef.current = null;
+    setInitialLoading(true);
+    setPageFetching(false);
+  }, [config.id]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -384,8 +542,14 @@ export function ResourcePreviewDemo({
   const panelOpen = creating || editing;
   const totalPages = pagination?.totalPages ?? 1;
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const pageSize = pagination?.limit ?? 12;
+  const pageSize = pagination?.limit ?? PREVIEW_PAGE_LIMIT;
   const activeFields = creating ? createFields : editFields;
+  const showSkeleton = initialLoading || pageFetching;
+  const skeletonRowCount = pageFetching
+    ? pageSize
+    : PREVIEW_PAGE_LIMIT;
+  const showEmpty =
+    !showSkeleton && !error && rows.length === 0;
 
   return (
     <div className="space-y-5" dir={"ltr"}>
@@ -434,7 +598,12 @@ export function ResourcePreviewDemo({
           "overflow-hidden rounded-xl border border-border bg-card",
         )}
       >
-        <div className="overflow-x-auto">
+        <div
+          className={cn(
+            "overflow-x-auto transition-opacity duration-200 ease-out",
+            pageFetching && "opacity-95",
+          )}
+        >
           <table className="w-full min-w-[40rem] border-collapse text-[13px]">
             <thead
               className={cn(
@@ -465,18 +634,20 @@ export function ResourcePreviewDemo({
                 ) : null}
               </tr>
             </thead>
-            <tbody>
-              {loading && rows.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={colCount}
-                    className="px-3 py-10 text-center text-muted-foreground"
-                  >
-                    {dict.preview.loading}
-                  </td>
-                </tr>
+            <tbody
+              aria-busy={showSkeleton}
+              className="motion-safe:transition-opacity motion-safe:duration-200"
+            >
+              {showSkeleton ? (
+                <PreviewTableSkeleton
+                  rowCount={skeletonRowCount}
+                  colCount={colCount}
+                  extraCols={extraCols}
+                  showImage={Boolean(config.imageKey)}
+                  showActions={catalogWritable}
+                />
               ) : null}
-              {!loading && rows.length === 0 ? (
+              {showEmpty ? (
                 <tr>
                   <td
                     colSpan={colCount}
@@ -486,7 +657,8 @@ export function ResourcePreviewDemo({
                   </td>
                 </tr>
               ) : null}
-              {rows.map((row, index) => {
+              {!showSkeleton
+                ? rows.map((row, index) => {
                 const rowNumber = (page - 1) * pageSize + index + 1;
                 const image =
                   config.imageKey && typeof row[config.imageKey] === "string"
@@ -572,7 +744,8 @@ export function ResourcePreviewDemo({
                     ) : null}
                   </tr>
                 );
-              })}
+              })
+                : null}
             </tbody>
           </table>
         </div>
@@ -589,12 +762,17 @@ export function ResourcePreviewDemo({
                 <button
                   key={n}
                   type="button"
-                  onClick={() => setPage(n)}
+                  disabled={pageFetching && n !== page}
+                  onClick={() => {
+                    if (n === page) return;
+                    setPage(n);
+                  }}
                   className={cn(
                     "grid size-8 place-items-center rounded-md font-mono text-[12px] transition-colors",
                     page === n
                       ? "bg-[var(--request)]/15 font-semibold text-foreground"
                       : "text-muted-foreground hover:bg-[var(--surface-hover)] hover:text-foreground",
+                    pageFetching && n !== page && "opacity-60",
                   )}
                 >
                   {n}
