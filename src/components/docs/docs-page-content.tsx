@@ -8,6 +8,7 @@ import { TemporaryApiLabel } from "@/components/layout/temporary-api-label";
 import { useUiLocale } from "@/components/providers/ui-locale-provider";
 import { apiResources, plannedResources } from "@/lib/catalog";
 import { RATE_LIMIT } from "@/lib/api/rate-limit";
+import { SITE_URL } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const responseShapeExample = `{
@@ -235,10 +236,10 @@ export function DocsPageContent() {
             <div className="space-y-3" dir="ltr">
               <VsCodeBlock
                 code={`<!-- SVG placeholder -->
-<img src="https://mock.sonojs.com/image/800/600" alt="Placeholder" />
+<img src="${SITE_URL}/image/800/600" alt="Placeholder" />
 
 <!-- Real photo -->
-<img src="https://mock.sonojs.com/image/800/600?type=real" alt="Photo" />`}
+<img src="${SITE_URL}/image/800/600?type=real" alt="Photo" />`}
                 language="html"
               />
             </div>
@@ -442,8 +443,11 @@ export function DocsPageContent() {
             </div>
             <div dir="ltr">
               <VsCodeBlock
-                code={`# Import into Postman / Insomnia / Swagger
-curl -O http://localhost:3000/openapi.json`}
+                code={`# Production
+curl -O ${SITE_URL}/openapi.json
+
+# Local
+# curl -O http://localhost:3000/openapi.json`}
                 language="bash"
               />
             </div>

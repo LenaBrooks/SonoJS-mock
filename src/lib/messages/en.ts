@@ -835,7 +835,7 @@ export const en: Messages = {
     title: "Documentation",
     navLabel: "Docs",
     intro:
-      "SonoJS Mock serves fake REST resources as JSON (JSONPlaceholder-style). Use GET on shared seed data, try Auth login, use the Playground, generate fixtures at /generator, placeholder images at /image-generator, JSON Workbench at /json, or publish writable JSON with Temporary API. Catalog writes are read-only in production - see Shared data.",
+      "SonoJS Mock at api.sonojs.com serves fake REST resources as JSON (JSONPlaceholder-style). Use GET on shared seed data, try Auth login, use the Playground, generate fixtures at /generator, placeholder images at /image-generator, JSON Workbench at /json, or publish writable JSON with Temporary API. Catalog writes are read-only in production - see Shared data.",
     toc: {
       intro: "Introduction",
       whatsNew: "What's new",
@@ -916,7 +916,7 @@ export const en: Messages = {
     statusSoon: "Coming soon",
     openapiTitle: "OpenAPI",
     openapiBody:
-      "Machine-readable catalog of every live endpoint (Auth, Users, Posts, Comments, Albums, Photos, Todos, Products, Notifications, Countries). Import into Postman, Swagger UI, or AI tools.",
+      "Machine-readable catalog of every live endpoint (Auth, Users, Posts, Comments, Albums, Photos, Todos, Products, Notifications, Countries). Download /openapi.json or import https://api.sonojs.com/openapi.json into Postman, Swagger UI, or AI tools.",
     download: "Download",
     requestsTitle: "Requests",
     requestsBody:

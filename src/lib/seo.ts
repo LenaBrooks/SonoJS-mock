@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import type { ApiResource } from "@/lib/catalog";
 import type { UiLocale } from "@/lib/locale/constants";
 
-export const SITE_URL = "https://mock.sonojs.com";
+export const SITE_URL = "https://api.sonojs.com";
+export const SITE_HOST = "api.sonojs.com";
 export const SITE_NAME = "SonoJS Mock";
 export const SITE_TAGLINE = "Free fake REST API";
 

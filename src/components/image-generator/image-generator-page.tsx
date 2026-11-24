@@ -16,6 +16,7 @@ import {
   type ImageSizePresetId,
   type ImageType,
 } from "@/lib/image/params";
+import { SITE_URL } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const segmentBtn =
@@ -39,7 +40,7 @@ export function ImageGeneratorPageContent() {
   const [batchId, setBatchId] = useState(newImageBatchId);
   const [previewKey, setPreviewKey] = useState(0);
   const [usageTab, setUsageTab] = useState<UsageTab>("html");
-  const [origin, setOrigin] = useState("https://mock.sonojs.com");
+  const [origin, setOrigin] = useState(SITE_URL);
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {

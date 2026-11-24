@@ -4,6 +4,8 @@
  * (and keep Zod validations in sync).
  */
 
+import { SITE_URL } from "@/lib/seo";
+
 export type OpenApiDocument = {
   openapi: string;
   info: Record<string, unknown>;
@@ -546,7 +548,12 @@ export function buildOpenApiDocument(serverUrl = "http://localhost:3000"): OpenA
     },
     servers: [
       { url: serverUrl, description: "Current deployment" },
-      { url: "http://localhost:3000", description: "Local development" },
+      ...(serverUrl.replace(/\/$/, "") !== SITE_URL
+        ? [{ url: SITE_URL, description: "Production (api.sonojs.com)" }]
+        : []),
+      ...(serverUrl.replace(/\/$/, "") !== "http://localhost:3000"
+        ? [{ url: "http://localhost:3000", description: "Local development" }]
+        : []),
     ],
     tags: [
       { name: "Auth", description: "Mock login and current user" },

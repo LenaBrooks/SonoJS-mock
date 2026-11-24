@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { SITE_URL } from "@/lib/seo";
 import {
   TMP_CLIENT_COOKIE,
   TMP_CLIENT_MAX_AGE_SEC,
@@ -44,6 +45,9 @@ export function temporaryPublicUrl(
 ): string {
   const env = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
   if (env) return `${env}/api/t/${publicId}`;
+  if (process.env.NODE_ENV === "production") {
+    return `${SITE_URL}/api/t/${publicId}`;
+  }
   const url = new URL(request.url);
   return `${url.origin}/api/t/${publicId}`;
 }

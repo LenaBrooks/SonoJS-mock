@@ -1,4 +1,6 @@
-# SonoJS Mock 
+# SonoJS Mock
+
+**Production:** [https://api.sonojs.com](https://api.sonojs.com)
 
 Fake REST APIs with real JSON - a docs-first playground for frontends, demos, and prototypes.
 
@@ -38,6 +40,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Variable | Required | Purpose |
 |----------|----------|---------|
 | `DATABASE_URL` | Yes | Postgres connection string |
+| `NEXT_PUBLIC_SITE_URL` | Production recommended | Public origin for Temporary API links (e.g. `https://api.sonojs.com`). Defaults to `https://api.sonojs.com` in production when unset. |
 | `CATALOG_WRITABLE` | Local dev optional | Set to `true` to allow POST/PATCH/DELETE on catalog APIs (default: writable in dev, read-only in production) |
 
 ## Product surfaces
@@ -100,7 +103,7 @@ curl http://localhost:3000/api/auth/me \
 
 ### Temporary API
 
-Paste your own JSON at [/temporary](https://mock.sonojs.com/temporary) (or locally `/temporary`). You get a public URL like `/api/t/<id>` that lasts 1–24 hours.
+Paste your own JSON at [/temporary](https://api.sonojs.com/temporary) (or locally `/temporary`). You get a public URL like `/api/t/<id>` that lasts 1–24 hours.
 
 ```bash
 # After creating in the UI, call the public URL:
@@ -130,7 +133,7 @@ You can also publish from the **Fake Data Generator** (`Create API`) - same Temp
 
 ### Fake Data Generator
 
-Open [/generator](https://mock.sonojs.com/generator) (or locally `/generator`). Generation runs **in the browser** - no backend call for the JSON itself.
+Open [/generator](https://api.sonojs.com/generator) (or locally `/generator`). Generation runs **in the browser** - no backend call for the JSON itself.
 
 | Capability | Detail |
 |------------|--------|
@@ -145,7 +148,7 @@ Open [/generator](https://mock.sonojs.com/generator) (or locally `/generator`). 
 
 ### Image Generator
 
-Open [/image-generator](https://mock.sonojs.com/image-generator) (or locally `/image-generator`) to pick size and mode, then copy a URL.
+Open [/image-generator](https://api.sonojs.com/image-generator) (or locally `/image-generator`) to pick size and mode, then copy a URL.
 
 | Mode | URL | Behavior |
 |------|-----|----------|
@@ -154,15 +157,15 @@ Open [/image-generator](https://mock.sonojs.com/image-generator) (or locally `/i
 | Stable | add `?seed=my-seed` | Same SVG colors or same real photo every time |
 
 ```html
-<img src="https://mock.sonojs.com/image/400/400" alt="Avatar" />
-<img src="https://mock.sonojs.com/image/1200/630?type=real" alt="Cover" />
+<img src="https://api.sonojs.com/image/400/400" alt="Avatar" />
+<img src="https://api.sonojs.com/image/1200/630?type=real" alt="Cover" />
 ```
 
 Optional query: `bg` / `fg` (hex) for custom SVG colors when you want full control.
 
 ### Playground
 
-[/playground](https://mock.sonojs.com/playground) sends live requests against the seeded APIs. Resource choice, action, URL, body, and last responses are kept **per resource** while you navigate the site (SPA). A full page reload starts fresh (Bearer token may still be in `sessionStorage`).
+[/playground](https://api.sonojs.com/playground) sends live requests against the seeded APIs. Resource choice, action, URL, body, and last responses are kept **per resource** while you navigate the site (SPA). A full page reload starts fresh (Bearer token may still be in `sessionStorage`).
 
 ### CRUD pattern
 
