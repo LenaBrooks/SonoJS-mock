@@ -25,6 +25,7 @@ import { useTheme } from "@/components/providers/theme-provider";
 import { useUiLocale } from "@/components/providers/ui-locale-provider";
 import { apiResources } from "@/lib/catalog";
 import { RESOURCE_PLACEHOLDERS } from "@/lib/resource-images";
+import { SITE_NAME } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const drawerIconClass = "size-4 shrink-0 text-muted-foreground";
@@ -140,8 +141,8 @@ export function SiteHeader() {
         className="h-[22px] w-auto shrink-0"
       />
       <span className="text-sm font-bold leading-none tracking-tight text-foreground">
-        Mock
-        <span className="sr-only"> — SonoJS Mock API</span>
+        API
+        <span className="sr-only"> — {SITE_NAME}</span>
       </span>
     </Link>
   );

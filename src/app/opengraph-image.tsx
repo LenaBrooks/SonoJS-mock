@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { SITE_HOST } from "@/lib/seo";
 
-export const alt = "SonoJS Mock - Free Fake REST APIs for Frontend Developers";
+export const alt = "SonoJS API - Free Fake REST APIs for Frontend Developers";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -44,7 +44,7 @@ export default function OpenGraphImage() {
               lineHeight: 1.05,
             }}
           >
-            SonoJS Mock
+            SonoJS API
           </div>
           <div
             style={{

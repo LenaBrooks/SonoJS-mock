@@ -4,7 +4,7 @@ import type { UiLocale } from "@/lib/locale/constants";
 
 export const SITE_URL = "https://api.sonojs.com";
 export const SITE_HOST = "api.sonojs.com";
-export const SITE_NAME = "SonoJS Mock";
+export const SITE_NAME = "SonoJS API";
 export const SITE_TAGLINE = "Free fake REST API";
 
 export const DEFAULT_DESCRIPTION =
